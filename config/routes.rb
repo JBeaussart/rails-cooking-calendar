@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  root "planning#index"
-
   devise_for :users
+
+  root "meal_plans#index"
 
   resources :recipes do
     member do

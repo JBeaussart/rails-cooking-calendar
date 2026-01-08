@@ -38,18 +38,15 @@ html lang="fr"
 
             / Navigation principale
             .hidden.md:flex.items-center.gap-1
-              = link_to root_path, class: "nav-link #{controller_name == 'planning' ? 'nav-link-active' : ''}"
-                span 📅
-                span Planning
+              = link_to root_path, class: "nav-link #{controller_name == 'meal_plans' ? 'nav-link-active' : ''}"
+                span 🗓️
+                span Planification
               = link_to recipes_path, class: "nav-link #{controller_name == 'recipes' ? 'nav-link-active' : ''}"
                 span 📖
                 span Recettes
               = link_to meal_events_path, class: "nav-link #{controller_name == 'meal_events' ? 'nav-link-active' : ''}"
                 span 🎉
                 span Événements
-              = link_to meal_plans_path, class: "nav-link #{controller_name == 'meal_plans' ? 'nav-link-active' : ''}"
-                span 🗓️
-                span Planification
 
             / User menu
             .flex.items-center.gap-4
@@ -67,18 +64,15 @@ html lang="fr"
       / Mobile navigation
       #mobile-nav.hidden.md:hidden.fixed.inset-0.z-40.bg-cream/95.backdrop-blur-lg.pt-20
         .flex.flex-col.gap-2.p-6
-          = link_to root_path, class: "nav-link text-lg #{controller_name == 'planning' ? 'nav-link-active' : ''}"
-            span 📅
-            span Planning
+          = link_to root_path, class: "nav-link text-lg #{controller_name == 'meal_plans' ? 'nav-link-active' : ''}"
+            span 🗓️
+            span Planification
           = link_to recipes_path, class: "nav-link text-lg #{controller_name == 'recipes' ? 'nav-link-active' : ''}"
             span 📖
             span Recettes
           = link_to meal_events_path, class: "nav-link text-lg #{controller_name == 'meal_events' ? 'nav-link-active' : ''}"
             span 🎉
             span Événements
-          = link_to meal_plans_path, class: "nav-link text-lg #{controller_name == 'meal_plans' ? 'nav-link-active' : ''}"
-            span 🗓️
-            span Planification
           hr.my-4.border-cream-dark
           .flex.items-center.gap-2.text-sm.text-navy/70.px-4.py-2
             span 👤

@@ -1,33 +1,57 @@
-/ Header
-.flex.flex-col.md:flex-row.md:items-center.md:justify-between.gap-6.mb-8
-  div
-    h1.page-title.flex.items-center.gap-3
-      span 🗓️
-      | Ma planification
-    p.text-navy/60.mt-2 Organisez vos repas de la semaine
+/ Welcome header
+.mb-8
+  .flex.flex-col.md:flex-row.md:items-center.md:justify-between.gap-6
+    div
+      h1.page-title.flex.items-center.gap-3
+        span 👋
+        | Bonjour !
+      p.text-navy/60.mt-2.text-lg Qu'est-ce qu'on mange cette semaine ?
 
-  = link_to new_meal_plan_path, class: "btn btn-primary"
-    span ✨
-    span Planifier un repas
+    .flex.flex-wrap.gap-3
+      = link_to recipes_path, class: "btn btn-outline"
+        span 📖
+        span Mes recettes
+      = link_to new_meal_plan_path, class: "btn btn-primary"
+        span ✨
+        span Planifier un repas
+
+/ Quick stats
+.grid.grid-cols-2.md:grid-cols-4.gap-4.mb-8
+  .card.p-4.text-center
+    .text-2xl.mb-1 📖
+    .text-xl.font-display.font-bold.text-navy = current_user.recipes.count
+    .text-xs.text-navy/60 Recettes
+  .card.p-4.text-center
+    .text-2xl.mb-1 ⭐
+    .text-xl.font-display.font-bold.text-terracotta = current_user.recipes.favorites.count
+    .text-xs.text-navy/60 Favoris
+  .card.p-4.text-center
+    .text-2xl.mb-1 🗓️
+    .text-xl.font-display.font-bold.text-sage = current_user.meal_plans.where("date >= ?", Date.today).count
+    .text-xs.text-navy/60 Repas prévus
+  .card.p-4.text-center
+    .text-2xl.mb-1 🎉
+    .text-xl.font-display.font-bold.text-mustard-dark = current_user.meal_events.where("date >= ?", Date.today).count
+    .text-xs.text-navy/60 Événements
 
 / Week navigation
 - current_week_start = params[:week] ? Date.parse(params[:week]) : Date.today.beginning_of_week
 - current_week_end = current_week_start.end_of_week
 
-.flex.items-center.justify-between.mb-8
-  = link_to meal_plans_path(week: (current_week_start - 7.days).to_s), class: "btn btn-ghost"
+.flex.items-center.justify-between.mb-6
+  = link_to meal_plans_path(week: (current_week_start - 7.days).to_s), class: "btn btn-ghost btn-sm"
     span ←
     span.hidden.sm:inline Semaine précédente
 
   .text-center
-    h2.text-xl.font-display.font-bold.text-navy
+    h2.text-lg.font-display.font-bold.text-navy
       = l(current_week_start, format: "%d %B")
       |  —
       = l(current_week_end, format: "%d %B %Y")
     - if current_week_start == Date.today.beginning_of_week
-      span.badge.badge-sage.mt-2 Cette semaine
+      span.badge.badge-sage.mt-1 Cette semaine
 
-  = link_to meal_plans_path(week: (current_week_start + 7.days).to_s), class: "btn btn-ghost"
+  = link_to meal_plans_path(week: (current_week_start + 7.days).to_s), class: "btn btn-ghost btn-sm"
     span.hidden.sm:inline Semaine suivante
     span →
 
@@ -94,7 +118,7 @@
                 | + Ajouter un repas
 
 / Legend
-.card.p-4.mt-8
+.card.p-4.mt-6
   .flex.flex-wrap.items-center.justify-center.gap-6.text-sm
     .flex.items-center.gap-2
       .w-4.h-4.rounded.bg-mustard/30
@@ -108,3 +132,16 @@
     .flex.items-center.gap-2
       .w-4.h-4.rounded.bg-navy/10
       span.text-navy/70 🍪 Snack
+
+/ Tip for new users
+- if current_user.recipes.count == 0
+  .card.p-6.mt-6.bg-gradient-to-r.from-sage/10.to-mustard/10.border-2.border-sage/20
+    .flex.items-start.gap-4
+      .text-4xl 💡
+      div
+        h3.font-display.font-bold.text-navy.mb-2 Pour commencer
+        p.text-navy/70.mb-4
+          | Créez d'abord quelques recettes, puis revenez ici pour les planifier sur votre semaine !
+        = link_to new_recipe_path, class: "btn btn-primary"
+          span ✨
+          span Créer ma première recette
