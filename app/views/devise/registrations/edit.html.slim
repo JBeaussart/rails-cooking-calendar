@@ -11,6 +11,29 @@
     | Mon compte
   p.text-navy/60.mt-2 Gérez vos informations personnelles
 
+/ Stats
+.grid.grid-cols-2.md:grid-cols-4.gap-4.mb-8
+  .card.p-4.text-center.card-hover
+    = link_to recipes_path, class: "block"
+      .text-2xl.mb-1 📖
+      .text-xl.font-display.font-bold.text-navy = current_user.recipes.count
+      .text-xs.text-navy/60 Recettes
+  .card.p-4.text-center.card-hover
+    = link_to favorites_recipes_path, class: "block"
+      .text-2xl.mb-1 ⭐
+      .text-xl.font-display.font-bold.text-terracotta = current_user.recipes.favorites.count
+      .text-xs.text-navy/60 Favoris
+  .card.p-4.text-center.card-hover
+    = link_to meal_plans_path, class: "block"
+      .text-2xl.mb-1 🗓️
+      .text-xl.font-display.font-bold.text-sage = current_user.meal_plans.where("date >= ?", Date.today).count
+      .text-xs.text-navy/60 Repas prévus
+  .card.p-4.text-center.card-hover
+    = link_to meal_events_path, class: "block"
+      .text-2xl.mb-1 🎉
+      .text-xl.font-display.font-bold.text-mustard-dark = current_user.meal_events.where("date >= ?", Date.today).count
+      .text-xs.text-navy/60 Événements
+
 .grid.lg:grid-cols-3.gap-8
   / Main form
   .lg:col-span-2.space-y-6
@@ -85,6 +108,13 @@
           div
             .text-navy/60 Connecté en tant que
             .font-medium.text-navy.truncate = resource.email
+
+        .flex.items-center.gap-3.p-3.bg-cream/50.rounded-lg
+          .w-10.h-10.bg-mustard/20.rounded-full.flex.items-center.justify-center
+            | 📅
+          div
+            .text-navy/60 Membre depuis
+            .font-medium.text-navy = l(resource.created_at, format: "%B %Y")
 
     / Danger zone
     .card.p-6.border-red-200

@@ -50,7 +50,7 @@ html lang="fr"
 
             / User menu
             .flex.items-center.gap-4
-              .hidden.sm:flex.items-center.gap-2.text-sm.text-navy/70
+              = link_to edit_user_registration_path, class: "hidden sm:flex items-center gap-2 text-sm text-navy/70 hover:text-terracotta transition-colors"
                 span.w-8.h-8.bg-sage/20.rounded-full.flex.items-center.justify-center.text-sage
                   | 👤
                 span.truncate.max-w-32 = current_user.email
@@ -74,10 +74,10 @@ html lang="fr"
             span 🎉
             span Événements
           hr.my-4.border-cream-dark
-          .flex.items-center.gap-2.text-sm.text-navy/70.px-4.py-2
+          = link_to edit_user_registration_path, class: "nav-link text-lg"
             span 👤
-            span = current_user.email
-          = link_to "Déconnexion", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link text-red-500"
+            span Mon compte
+          = link_to "Déconnexion", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link text-lg text-red-500"
 
     / Flash messages container (pour turbo_stream)
     #flash-messages

@@ -3,36 +3,14 @@
   .flex.flex-col.md:flex-row.md:items-center.md:justify-between.gap-6
     div
       h1.page-title.flex.items-center.gap-3
-        span 👋
-        | Bonjour !
-      p.text-navy/60.mt-2.text-lg Qu'est-ce qu'on mange cette semaine ?
+        span 🗓️
+        | Ma semaine
+      p.text-navy/60.mt-2.text-lg Qu'est-ce qu'on mange ?
 
     .flex.flex-wrap.gap-3
       = link_to recipes_path, class: "btn btn-outline"
         span 📖
         span Mes recettes
-      = link_to new_meal_plan_path, class: "btn btn-primary"
-        span ✨
-        span Planifier un repas
-
-/ Quick stats
-.grid.grid-cols-2.md:grid-cols-4.gap-4.mb-8
-  .card.p-4.text-center
-    .text-2xl.mb-1 📖
-    .text-xl.font-display.font-bold.text-navy = current_user.recipes.count
-    .text-xs.text-navy/60 Recettes
-  .card.p-4.text-center
-    .text-2xl.mb-1 ⭐
-    .text-xl.font-display.font-bold.text-terracotta = current_user.recipes.favorites.count
-    .text-xs.text-navy/60 Favoris
-  .card.p-4.text-center
-    .text-2xl.mb-1 🗓️
-    .text-xl.font-display.font-bold.text-sage = current_user.meal_plans.where("date >= ?", Date.today).count
-    .text-xs.text-navy/60 Repas prévus
-  .card.p-4.text-center
-    .text-2xl.mb-1 🎉
-    .text-xl.font-display.font-bold.text-mustard-dark = current_user.meal_events.where("date >= ?", Date.today).count
-    .text-xs.text-navy/60 Événements
 
 / Week navigation
 - current_week_start = params[:week] ? Date.parse(params[:week]) : Date.today.beginning_of_week
