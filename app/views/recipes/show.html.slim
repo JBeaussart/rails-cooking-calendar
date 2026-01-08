@@ -68,15 +68,11 @@
   .space-y-4.sm:space-y-6
     / Actions card
     .card.p-4.sm:p-6
-      h3.font-semibold.text-navy.mb-3.sm:mb-4.text-sm.sm:text-base Actions
-      .grid.grid-cols-2.lg:grid-cols-1.gap-2.sm:gap-3
-        = link_to edit_recipe_path(@recipe), class: "btn btn-primary justify-center text-sm sm:text-base"
+      .flex.gap-2.sm:gap-3.lg:flex-col
+        = link_to edit_recipe_path(@recipe), class: "btn btn-primary justify-center flex-1 text-sm sm:text-base"
           span ✏️
           span Modifier
-        = link_to new_meal_plan_path(recipe_id: @recipe.id), class: "btn btn-secondary justify-center text-sm sm:text-base"
-          span 📅
-          span Planifier
-        = link_to recipe_path(@recipe), data: { turbo_method: :delete, turbo_confirm: "Supprimer cette recette ?" }, class: "btn btn-danger justify-center col-span-2 lg:col-span-1 text-sm sm:text-base"
+        = link_to recipe_path(@recipe), data: { turbo_method: :delete, turbo_confirm: "Supprimer cette recette ?" }, class: "btn btn-danger justify-center flex-1 text-sm sm:text-base"
           span 🗑️
           span Supprimer
 
