@@ -1,0 +1,107 @@
+.grid.lg:grid-cols-3.gap-8
+  / Main form
+  .lg:col-span-2
+    = form_with model: @recipe, class: "space-y-6" do |f|
+      - if @recipe.errors.any?
+        .card.bg-red-50.border-red-200.p-6.mb-6
+          .flex.items-start.gap-4
+            .w-10.h-10.bg-red-100.rounded-xl.flex.items-center.justify-center.text-red-500
+              span ⚠️
+            div
+              h3.font-semibold.text-red-800.mb-2
+                = "#{@recipe.errors.count} erreur(s) à corriger"
+              ul.text-sm.text-red-600.space-y-1
+                - @recipe.errors.full_messages.each do |message|
+                  li = message
+
+      .card.p-8.space-y-6
+        h2.section-title.flex.items-center.gap-3.mb-2
+          span 📝
+          | Informations générales
+
+        .space-y-5
+          .form-group
+            = f.label :title, class: "form-label"
+              span Titre de la recette
+              span.text-terracotta.ml-1 *
+            = f.text_field :title, required: true, class: "form-input", placeholder: "Ex: Poulet rôti aux herbes"
+
+          .form-group
+            = f.label :preparation_time, class: "form-label"
+              | Temps de préparation (minutes)
+            .relative
+              = f.number_field :preparation_time, min: 0, class: "form-input pl-12", placeholder: "30"
+              .absolute.left-4.top-1/2.-translate-y-1/2.text-navy/40
+                | ⏱️
+
+          .form-group.flex.items-center.gap-3.p-4.bg-cream/50.rounded-xl
+            = f.check_box :is_favorite, class: "w-5 h-5 rounded border-2 border-cream-dark text-terracotta focus:ring-terracotta"
+            = f.label :is_favorite, class: "text-navy font-medium cursor-pointer"
+              span.mr-2 ⭐
+              | Marquer comme recette favorite
+
+      .card.p-8.space-y-6
+        h2.section-title.flex.items-center.gap-3.mb-2
+          span 🥕
+          | Ingrédients
+
+        .form-group
+          = f.label :ingredients, class: "form-label"
+            span Liste des ingrédients
+            span.text-terracotta.ml-1 *
+          = f.text_area :ingredients, value: @recipe.ingredients.join("\n"), rows: 8, class: "form-input font-mono", placeholder: "200g de farine\n3 œufs\n100ml de lait\n..."
+          p.text-sm.text-navy/50.mt-2.flex.items-center.gap-2
+            span 💡
+            | Entrez chaque ingrédient sur une nouvelle ligne
+
+      .card.p-8.space-y-6
+        h2.section-title.flex.items-center.gap-3.mb-2
+          span 👨‍🍳
+          | Étapes de préparation
+
+        .form-group
+          = f.label :steps, class: "form-label"
+            span Instructions
+            span.text-terracotta.ml-1 *
+          = f.text_area :steps, value: @recipe.steps.join("\n"), rows: 10, class: "form-input font-mono", placeholder: "Préchauffer le four à 180°C\nMélanger la farine et les œufs\nAjouter le lait progressivement\n..."
+          p.text-sm.text-navy/50.mt-2.flex.items-center.gap-2
+            span 💡
+            | Entrez chaque étape sur une nouvelle ligne
+
+      / Actions
+      .flex.flex-col.sm:flex-row.gap-4.pt-4
+        = f.submit class: "btn btn-primary flex-1 sm:flex-none"
+        = link_to "Annuler", (@recipe.persisted? ? recipe_path(@recipe) : recipes_path), class: "btn btn-outline"
+
+  / Sidebar tips
+  .space-y-6
+    .card.p-6.bg-gradient-to-br.from-sage/10.to-sage/5
+      .flex.items-center.gap-3.mb-4
+        .w-10.h-10.bg-sage/20.rounded-xl.flex.items-center.justify-center
+          span 💡
+        h3.font-semibold.text-navy Conseils
+
+      ul.space-y-3.text-sm.text-navy/70
+        li.flex.items-start.gap-2
+          span.text-sage ✓
+          span Soyez précis dans les quantités
+        li.flex.items-start.gap-2
+          span.text-sage ✓
+          span Décrivez chaque étape clairement
+        li.flex.items-start.gap-2
+          span.text-sage ✓
+          span Ajoutez le temps de préparation
+
+    .card.p-6
+      .flex.items-center.gap-3.mb-4
+        .w-10.h-10.bg-mustard/30.rounded-xl.flex.items-center.justify-center
+          span 📊
+        h3.font-semibold.text-navy Aperçu
+
+      .space-y-3.text-sm
+        .flex.justify-between.items-center.py-2.border-b.border-cream-dark
+          span.text-navy/60 Ingrédients
+          span#ingredients-count.font-medium.text-navy = @recipe.ingredients.size
+        .flex.justify-between.items-center.py-2
+          span.text-navy/60 Étapes
+          span#steps-count.font-medium.text-navy = @recipe.steps.size

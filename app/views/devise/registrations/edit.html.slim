@@ -1,0 +1,103 @@
+/ Breadcrumb
+.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+  = link_to "Accueil", root_path, class: "hover:text-terracotta transition-colors"
+  span /
+  span.text-navy Mon compte
+
+/ Header
+.mb-8
+  h1.page-title.flex.items-center.gap-3
+    span 👤
+    | Mon compte
+  p.text-navy/60.mt-2 Gérez vos informations personnelles
+
+.grid.lg:grid-cols-3.gap-8
+  / Main form
+  .lg:col-span-2.space-y-6
+    = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-6" }) do |f|
+      = render "devise/shared/error_messages", resource: resource
+
+      / Email section
+      .card.p-8
+        h2.section-title.flex.items-center.gap-3.mb-6
+          .w-10.h-10.bg-sage/20.rounded-xl.flex.items-center.justify-center
+            span 📧
+          | Informations
+
+        .space-y-5
+          .form-group
+            = f.label :email, class: "form-label"
+              | Email
+            = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input"
+            - if devise_mapping.confirmable? && resource.pending_reconfirmation?
+              p.text-sm.text-mustard-dark.mt-2
+                | En attente de confirmation pour : #{resource.unconfirmed_email}
+
+      / Password section
+      .card.p-8
+        h2.section-title.flex.items-center.gap-3.mb-6
+          .w-10.h-10.bg-terracotta/10.rounded-xl.flex.items-center.justify-center
+            span 🔒
+          | Changer le mot de passe
+
+        p.text-sm.text-navy/60.mb-6 Laissez vide si vous ne souhaitez pas changer votre mot de passe
+
+        .space-y-5
+          .form-group
+            = f.label :password, class: "form-label"
+              | Nouveau mot de passe
+            = f.password_field :password, autocomplete: "new-password", class: "form-input", placeholder: "••••••••"
+            - if @minimum_password_length
+              p.text-sm.text-navy/50.mt-2
+                | Minimum #{@minimum_password_length} caractères
+
+          .form-group
+            = f.label :password_confirmation, class: "form-label"
+              | Confirmer le nouveau mot de passe
+            = f.password_field :password_confirmation, autocomplete: "new-password", class: "form-input", placeholder: "••••••••"
+
+      / Current password for confirmation
+      .card.p-8.bg-cream/50
+        h2.section-title.flex.items-center.gap-3.mb-6
+          .w-10.h-10.bg-mustard/30.rounded-xl.flex.items-center.justify-center
+            span ✓
+          | Confirmation
+
+        .form-group
+          = f.label :current_password, class: "form-label"
+            | Mot de passe actuel
+            span.text-terracotta.ml-1 *
+          = f.password_field :current_password, autocomplete: "current-password", class: "form-input", placeholder: "••••••••"
+          p.text-sm.text-navy/50.mt-2 Requis pour valider les modifications
+
+        .mt-6
+          = f.submit "Mettre à jour", class: "btn btn-primary"
+
+  / Sidebar
+  .space-y-6
+    / Account info
+    .card.p-6
+      h3.font-semibold.text-navy.mb-4 Mon compte
+      .space-y-3.text-sm
+        .flex.items-center.gap-3.p-3.bg-cream/50.rounded-lg
+          .w-10.h-10.bg-sage/20.rounded-full.flex.items-center.justify-center.text-sage
+            | 👤
+          div
+            .text-navy/60 Connecté en tant que
+            .font-medium.text-navy.truncate = resource.email
+
+    / Danger zone
+    .card.p-6.border-red-200
+      h3.font-semibold.text-red-600.mb-4.flex.items-center.gap-2
+        span ⚠️
+        | Zone dangereuse
+
+      p.text-sm.text-navy/60.mb-4
+        | La suppression de votre compte est irréversible. Toutes vos recettes, planifications et événements seront perdus.
+
+      = button_to "Supprimer mon compte", registration_path(resource_name), data: { turbo_confirm: "Êtes-vous sûr ? Cette action est irréversible et supprimera toutes vos données." }, method: :delete, class: "btn btn-danger w-full"
+
+    / Back link
+    = link_to root_path, class: "btn btn-outline w-full"
+      span ←
+      span Retour à l'accueil

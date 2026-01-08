@@ -1,0 +1,84 @@
+.grid.lg:grid-cols-3.gap-8
+  / Main form
+  .lg:col-span-2
+    = form_with model: @meal_event, class: "space-y-6" do |f|
+      - if @meal_event.errors.any?
+        .card.bg-red-50.border-red-200.p-6.mb-6
+          .flex.items-start.gap-4
+            .w-10.h-10.bg-red-100.rounded-xl.flex.items-center.justify-center.text-red-500
+              span ⚠️
+            div
+              h3.font-semibold.text-red-800.mb-2
+                = "#{@meal_event.errors.count} erreur(s) à corriger"
+              ul.text-sm.text-red-600.space-y-1
+                - @meal_event.errors.full_messages.each do |message|
+                  li = message
+
+      .card.p-8.space-y-6
+        h2.section-title.flex.items-center.gap-3.mb-2
+          span 🎉
+          | Informations de l'événement
+
+        .space-y-5
+          .form-group
+            = f.label :title, class: "form-label"
+              span Nom de l'événement
+              span.text-terracotta.ml-1 *
+            = f.text_field :title, required: true, class: "form-input", placeholder: "Ex: Anniversaire de Sophie"
+
+          .form-group
+            = f.label :date, class: "form-label"
+              span Date
+              span.text-terracotta.ml-1 *
+            .relative
+              = f.date_field :date, required: true, class: "form-input", min: Date.today
+              .absolute.right-4.top-1/2.-translate-y-1/2.text-navy/40.pointer-events-none
+                | 📅
+
+          .form-group
+            = f.label :guests_count, class: "form-label"
+              | Nombre d'invités
+            .relative
+              = f.number_field :guests_count, min: 0, class: "form-input pl-12", placeholder: "10"
+              .absolute.left-4.top-1/2.-translate-y-1/2.text-navy/40
+                | 👥
+            p.text-sm.text-navy/50.mt-2 Optionnel — pour vous aider à planifier les quantités
+
+      / Actions
+      .flex.flex-col.sm:flex-row.gap-4.pt-4
+        = f.submit class: "btn btn-primary flex-1 sm:flex-none"
+        = link_to "Annuler", (@meal_event.persisted? ? meal_event_path(@meal_event) : meal_events_path), class: "btn btn-outline"
+
+  / Sidebar
+  .space-y-6
+    .card.p-6.bg-gradient-to-br.from-mustard/20.to-mustard/5
+      .flex.items-center.gap-3.mb-4
+        .w-10.h-10.bg-mustard/30.rounded-xl.flex.items-center.justify-center
+          span 💡
+        h3.font-semibold.text-navy Idées d'événements
+
+      ul.space-y-3.text-sm.text-navy/70
+        li.flex.items-center.gap-2
+          span 🎂
+          | Anniversaires
+        li.flex.items-center.gap-2
+          span 🎄
+          | Fêtes de fin d'année
+        li.flex.items-center.gap-2
+          span 🍖
+          | Barbecue entre amis
+        li.flex.items-center.gap-2
+          span 🥂
+          | Dîner romantique
+        li.flex.items-center.gap-2
+          span 👨‍👩‍👧‍👦
+          | Repas de famille
+
+    .card.p-6
+      .flex.items-center.gap-3.mb-4
+        .w-10.h-10.bg-sage/20.rounded-xl.flex.items-center.justify-center
+          span 📝
+        h3.font-semibold.text-navy Astuce
+
+      p.text-sm.text-navy/70
+        | Une fois l'événement créé, vous pourrez planifier les repas correspondants depuis la page de planification.

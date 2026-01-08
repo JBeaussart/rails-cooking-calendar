@@ -1,0 +1,14 @@
+/ Breadcrumb
+.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+  = link_to "Recettes", recipes_path, class: "hover:text-terracotta transition-colors"
+  span /
+  span.text-navy Nouvelle recette
+
+/ Header
+.mb-8
+  h1.page-title.flex.items-center.gap-3
+    span ✨
+    | Nouvelle recette
+  p.text-navy/60.mt-2 Créez une nouvelle recette pour votre famille
+
+= render "form"

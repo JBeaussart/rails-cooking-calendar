@@ -1,0 +1,13 @@
+- if resource.errors.any?
+  .bg-red-50.border-2.border-red-200.rounded-xl.p-6.mb-6
+    .flex.items-start.gap-4
+      .w-10.h-10.bg-red-100.rounded-xl.flex.items-center.justify-center.text-red-500.flex-shrink-0
+        span ⚠️
+      div
+        h3.font-semibold.text-red-800.mb-2
+          = I18n.t("errors.messages.not_saved", count: resource.errors.count, resource: resource.class.model_name.human.downcase)
+        ul.text-sm.text-red-600.space-y-1
+          - resource.errors.full_messages.each do |message|
+            li.flex.items-center.gap-2
+              span •
+              = message

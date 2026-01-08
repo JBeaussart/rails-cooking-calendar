@@ -1,0 +1,19 @@
+/ Breadcrumb
+.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+  = link_to "Planification", meal_plans_path, class: "hover:text-terracotta transition-colors"
+  span /
+  = link_to l(@meal_plan.date, format: :long), meal_plan_path(@meal_plan), class: "hover:text-terracotta transition-colors"
+  span /
+  span.text-navy Modifier
+
+/ Header
+.mb-8
+  h1.page-title.flex.items-center.gap-3
+    span ✏️
+    | Modifier la planification
+  p.text-navy/60.mt-2
+    = l(@meal_plan.date, format: :long)
+    |  —
+    = @meal_plan.recipe.title
+
+= render "form"

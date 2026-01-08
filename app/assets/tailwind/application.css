@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette chaleureuse et familiale */
+  --color-cream: #FFF8F0;
+  --color-cream-dark: #F5EBE0;
+  --color-terracotta: #E07A5F;
+  --color-terracotta-dark: #C9634A;
+  --color-sage: #81B29A;
+  --color-sage-dark: #6A9980;
+  --color-mustard: #F2CC8F;
+  --color-mustard-dark: #E0B86E;
+  --color-navy: #3D405B;
+  --color-navy-light: #5C5F7E;
+  
+  /* Fonts */
+  --font-display: "Fraunces", serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+/* Custom utilities */
+@utility card {
+  @apply bg-white rounded-2xl shadow-lg border border-cream-dark/50;
+}
+
+@utility card-hover {
+  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200;
+}
+
+@utility btn-primary {
+  @apply bg-terracotta text-white hover:bg-terracotta-dark active:scale-95 shadow-md hover:shadow-lg;
+}
+
+@utility btn-secondary {
+  @apply bg-sage text-white hover:bg-sage-dark active:scale-95;
+}
+
+@utility btn-outline {
+  @apply border-2 border-navy/20 text-navy hover:bg-navy hover:text-white active:scale-95;
+}
+
+@utility btn-ghost {
+  @apply text-navy hover:bg-navy/5 active:scale-95;
+}
+
+@utility btn-danger {
+  @apply bg-red-500 text-white hover:bg-red-600 active:scale-95;
+}
+
+@utility btn-sm {
+  @apply px-3 py-1.5 text-sm rounded-lg;
+}
+
+@utility form-input {
+  @apply w-full px-4 py-3 rounded-xl border-2 border-cream-dark bg-white text-navy placeholder-navy/40 transition-all duration-200 focus:outline-none focus:border-sage focus:ring-4 focus:ring-sage/20;
+}
+
+@utility form-label {
+  @apply block text-sm font-semibold text-navy mb-2;
+}
+
+@utility section-title {
+  @apply text-2xl font-display font-bold text-navy;
+}
+
+@utility page-title {
+  @apply text-3xl md:text-4xl font-display font-bold text-navy;
+}
+
+@utility badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+}
+
+@utility badge-terracotta {
+  @apply bg-terracotta/10 text-terracotta;
+}
+
+@utility badge-sage {
+  @apply bg-sage/10 text-sage-dark;
+}
+
+@utility badge-mustard {
+  @apply bg-mustard/30 text-navy;
+}
+
+@utility empty-state {
+  @apply text-center py-16 text-navy/50;
+}
+
+@utility nav-link {
+  @apply flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 text-navy/70 hover:text-navy hover:bg-cream;
+}
+
+@utility nav-link-active {
+  @apply bg-terracotta/10 text-terracotta;
+}

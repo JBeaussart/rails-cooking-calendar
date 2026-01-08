@@ -66,3 +66,9 @@ group :test do
 end
 
 gem "devise", "~> 4.9"
+
+# Slim template engine [https://github.com/slim-template/slim-rails]
+gem "slim-rails"
+
+# Tailwind CSS [https://github.com/rails/tailwindcss-rails]
+gem "tailwindcss-rails"

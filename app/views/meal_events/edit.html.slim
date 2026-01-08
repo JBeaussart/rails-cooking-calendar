@@ -1,0 +1,16 @@
+/ Breadcrumb
+.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+  = link_to "Événements", meal_events_path, class: "hover:text-terracotta transition-colors"
+  span /
+  = link_to @meal_event.title, meal_event_path(@meal_event), class: "hover:text-terracotta transition-colors"
+  span /
+  span.text-navy Modifier
+
+/ Header
+.mb-8
+  h1.page-title.flex.items-center.gap-3
+    span ✏️
+    | Modifier l'événement
+  p.text-navy/60.mt-2 = @meal_event.title
+
+= render "form"

@@ -1,0 +1,143 @@
+/ Hero section
+.mb-12
+  .flex.flex-col.md:flex-row.md:items-center.md:justify-between.gap-6
+    div
+      h1.page-title.mb-2
+        | Bonjour 
+        span.text-terracotta = current_user.email.split('@').first.capitalize
+        |  👋
+      p.text-navy/60.text-lg Qu'est-ce qu'on mange aujourd'hui ?
+    
+    .flex.flex-wrap.gap-3
+      = link_to new_recipe_path, class: "btn btn-primary"
+        span ✨
+        span Nouvelle recette
+      = link_to new_meal_plan_path, class: "btn btn-secondary"
+        span 📅
+        span Planifier un repas
+
+/ Stats rapides
+.grid.grid-cols-2.md:grid-cols-4.gap-4.mb-12
+  .card.p-6.text-center
+    .text-3xl.mb-2 📖
+    .text-2xl.font-display.font-bold.text-navy = current_user.recipes.count
+    .text-sm.text-navy/60 Recettes
+  .card.p-6.text-center
+    .text-3xl.mb-2 ⭐
+    .text-2xl.font-display.font-bold.text-terracotta = current_user.recipes.favorites.count
+    .text-sm.text-navy/60 Favoris
+  .card.p-6.text-center
+    .text-3xl.mb-2 🗓️
+    .text-2xl.font-display.font-bold.text-sage = current_user.meal_plans.where("date >= ?", Date.today).count
+    .text-sm.text-navy/60 Repas prévus
+  .card.p-6.text-center
+    .text-3xl.mb-2 🎉
+    .text-2xl.font-display.font-bold.text-mustard-dark = current_user.meal_events.where("date >= ?", Date.today).count
+    .text-sm.text-navy/60 Événements
+
+/ Contenu principal
+.grid.lg:grid-cols-3.gap-8
+
+  / Repas de la semaine
+  .lg:col-span-2
+    .card.overflow-hidden
+      .bg-gradient-to-r.from-sage.to-sage-dark.px-6.py-4
+        h2.text-xl.font-display.font-bold.text-white.flex.items-center.gap-2
+          span 🍽️
+          span Repas de la semaine
+
+      .p-6
+        - week_plans = @meal_plans.where(date: Date.today.beginning_of_week..Date.today.end_of_week).group_by(&:date)
+        - if week_plans.any?
+          .space-y-4
+            - (Date.today.beginning_of_week..Date.today.end_of_week).each do |date|
+              - day_plans = week_plans[date] || []
+              .flex.gap-4.p-4.rounded-xl class="#{date == Date.today ? 'bg-terracotta/5 ring-2 ring-terracotta/20' : 'bg-cream/50 hover:bg-cream'} transition-colors"
+                .flex-shrink-0.w-16.text-center
+                  .text-xs.font-semibold.uppercase.tracking-wide class="#{date == Date.today ? 'text-terracotta' : 'text-navy/50'}"
+                    = l(date, format: "%a")
+                  .text-2xl.font-display.font-bold class="#{date == Date.today ? 'text-terracotta' : 'text-navy'}"
+                    = date.day
+                
+                .flex-1.min-w-0
+                  - if day_plans.any?
+                    .flex.flex-wrap.gap-2
+                      - day_plans.each do |plan|
+                        .inline-flex.items-center.gap-2.bg-white.rounded-lg.px-3.py-2.shadow-sm
+                          span.badge class="#{plan.meal_type == 'lunch' ? 'badge-sage' : plan.meal_type == 'dinner' ? 'badge-terracotta' : 'badge-mustard'}"
+                            = plan.meal_type == 'breakfast' ? '🌅' : plan.meal_type == 'lunch' ? '☀️' : plan.meal_type == 'dinner' ? '🌙' : '🍪'
+                          span.text-sm.font-medium.text-navy.truncate = plan.recipe.title
+                  - else
+                    .text-navy/40.text-sm.italic Rien de prévu
+                    
+                - if date >= Date.today
+                  = link_to new_meal_plan_path(date: date), class: "flex-shrink-0 w-8 h-8 rounded-lg bg-sage/10 hover:bg-sage/20 flex items-center justify-center text-sage transition-colors"
+                    span +
+        - else
+          .empty-state
+            .text-6xl.mb-4 🍳
+            p.text-lg.mb-6 Aucun repas planifié cette semaine
+            = link_to new_meal_plan_path, class: "btn btn-primary"
+              span Planifier mon premier repas
+
+  / Sidebar
+  .space-y-6
+    / Événements à venir
+    .card.overflow-hidden
+      .bg-gradient-to-r.from-terracotta.to-terracotta-dark.px-6.py-4
+        h2.text-lg.font-display.font-bold.text-white.flex.items-center.gap-2
+          span 🎉
+          span Événements à venir
+
+      .p-4
+        - upcoming_events = @meal_events.where("date >= ?", Date.today).limit(3)
+        - if upcoming_events.any?
+          .space-y-3
+            - upcoming_events.each do |event|
+              = link_to meal_event_path(event), class: "block p-3 rounded-xl bg-cream/50 hover:bg-cream transition-colors group"
+                .flex.items-start.gap-3
+                  .flex-shrink-0.w-12.h-12.bg-mustard/30.rounded-xl.flex.items-center.justify-center.text-xl
+                    | 📅
+                  div
+                    h3.font-semibold.text-navy.group-hover:text-terracotta.transition-colors = event.title
+                    p.text-sm.text-navy/60 = l(event.date, format: :long)
+                    - if event.guests_count
+                      p.text-xs.text-navy/50
+                        | 👥 #{event.guests_count} invité(s)
+          
+          .mt-4.pt-4.border-t.border-cream-dark
+            = link_to meal_events_path, class: "text-sm font-medium text-terracotta hover:underline"
+              | Voir tous les événements →
+        - else
+          .text-center.py-6
+            .text-4xl.mb-2 🎈
+            p.text-sm.text-navy/50.mb-3 Aucun événement prévu
+            = link_to new_meal_event_path, class: "btn btn-sm btn-outline"
+              | Créer un événement
+
+    / Recettes favorites
+    .card.overflow-hidden
+      .bg-gradient-to-r.from-mustard.to-mustard-dark.px-6.py-4
+        h2.text-lg.font-display.font-bold.text-navy.flex.items-center.gap-2
+          span ⭐
+          span Recettes favorites
+
+      .p-4
+        - favorite_recipes = current_user.recipes.favorites.limit(4)
+        - if favorite_recipes.any?
+          .space-y-2
+            - favorite_recipes.each do |recipe|
+              = link_to recipe_path(recipe), class: "flex items-center gap-3 p-2 rounded-lg hover:bg-cream transition-colors group"
+                .w-10.h-10.bg-terracotta/10.rounded-lg.flex.items-center.justify-center.text-terracotta
+                  | ★
+                span.text-sm.font-medium.text-navy.group-hover:text-terracotta.transition-colors.truncate = recipe.title
+          
+          .mt-4.pt-4.border-t.border-cream-dark
+            = link_to favorites_recipes_path, class: "text-sm font-medium text-terracotta hover:underline"
+              | Voir toutes les favorites →
+        - else
+          .text-center.py-6
+            .text-4xl.mb-2 ⭐
+            p.text-sm.text-navy/50.mb-3 Pas encore de favoris
+            = link_to recipes_path, class: "btn btn-sm btn-outline"
+              | Parcourir les recettes

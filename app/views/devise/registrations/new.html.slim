@@ -1,0 +1,55 @@
+.min-h-screen.flex.items-center.justify-center.py-12.px-4
+  .w-full.max-w-md
+
+    / Logo & Welcome
+    .text-center.mb-8
+      .w-20.h-20.bg-gradient-to-br.from-sage.to-sage-dark.rounded-2xl.flex.items-center.justify-center.mx-auto.mb-6.shadow-xl
+        span.text-4xl 👨‍👩‍👧‍👦
+      h1.font-display.font-bold.text-3xl.text-navy.mb-2 Rejoignez-nous !
+      p.text-navy/60 Créez votre compte familial et commencez à planifier vos repas
+
+    / Registration form
+    .card.p-8
+      = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-6" }) do |f|
+        = render "devise/shared/error_messages", resource: resource
+
+        .form-group
+          = f.label :email, class: "form-label"
+            | Email
+            span.text-terracotta.ml-1 *
+          = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input", placeholder: "votre@email.com"
+
+        .form-group
+          = f.label :password, class: "form-label"
+            | Mot de passe
+            span.text-terracotta.ml-1 *
+          = f.password_field :password, autocomplete: "new-password", class: "form-input", placeholder: "••••••••"
+          - if @minimum_password_length
+            p.text-sm.text-navy/50.mt-2
+              | Minimum #{@minimum_password_length} caractères
+
+        .form-group
+          = f.label :password_confirmation, class: "form-label"
+            | Confirmer le mot de passe
+            span.text-terracotta.ml-1 *
+          = f.password_field :password_confirmation, autocomplete: "new-password", class: "form-input", placeholder: "••••••••"
+
+        = f.submit "Créer mon compte", class: "btn btn-primary w-full text-lg py-3"
+
+    / Login link
+    .text-center.mt-6
+      p.text-navy/60
+        | Déjà un compte ?
+        = link_to "Se connecter", new_session_path(resource_name), class: "text-terracotta font-semibold hover:underline ml-1"
+
+    / Features preview
+    .mt-12.grid.grid-cols-3.gap-4.text-center
+      .p-4
+        .text-2xl.mb-2 📖
+        .text-xs.text-navy/50 Créez vos recettes
+      .p-4
+        .text-2xl.mb-2 🗓️
+        .text-xs.text-navy/50 Planifiez vos repas
+      .p-4
+        .text-2xl.mb-2 🎉
+        .text-xs.text-navy/50 Organisez vos événements

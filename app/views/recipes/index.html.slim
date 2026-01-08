@@ -1,0 +1,155 @@
+/ Header
+.flex.flex-col.md:flex-row.md:items-center.md:justify-between.gap-6.mb-8
+  div
+    h1.page-title.flex.items-center.gap-3
+      span 📖
+      - if action_name == "favorites"
+        | Mes recettes favorites
+      - else
+        | Mes recettes
+    p.text-navy/60.mt-2
+      - if action_name == "favorites"
+        | Vos recettes préférées, toujours à portée de main
+      - else
+        | Toutes vos délicieuses recettes
+
+  = link_to new_recipe_path, class: "btn btn-primary"
+    span ✨
+    span Nouvelle recette
+
+/ Sélecteur de planification rapide
+.card.p-4.mb-8.bg-gradient-to-r.from-sage/10.to-mustard/10.border-2.border-sage/20 data-controller="planning-selector"
+  .flex.flex-col.lg:flex-row.lg:items-center.gap-4
+    .flex.items-center.gap-2.text-navy.font-medium
+      span.text-xl 📅
+      span Planification rapide :
+    
+    / Sélecteur de date
+    .flex.flex-wrap.items-center.gap-2
+      - (Date.today..Date.today + 6.days).each do |date|
+        - is_today = date == Date.today
+        label.cursor-pointer
+          input.peer.sr-only type="radio" name="planning_date" value=date.to_s checked=(date == Date.today)
+          .px-3.py-2.rounded-lg.text-sm.font-medium.transition-all.border-2.border-transparent class="peer-checked:bg-sage peer-checked:text-white peer-checked:border-sage hover:bg-sage/10"
+            .text-xs.uppercase.tracking-wide class="#{is_today ? '' : 'opacity-60'}"
+              - if is_today
+                | Auj.
+              - else
+                = l(date, format: "%a")
+            .text-lg.font-bold = date.day
+
+    / Sélecteur de type de repas
+    .flex.items-center.gap-2
+      - MealPlan::MEAL_TYPES.each do |type|
+        - icon = type == 'breakfast' ? '🌅' : type == 'lunch' ? '☀️' : type == 'dinner' ? '🌙' : '🍪'
+        - default_checked = type == 'dinner'
+        label.cursor-pointer
+          input.peer.sr-only type="radio" name="planning_meal_type" value=type checked=default_checked
+          .px-3.py-2.rounded-lg.transition-all.border-2.border-transparent.flex.items-center.gap-1 class="peer-checked:bg-terracotta peer-checked:text-white peer-checked:border-terracotta hover:bg-terracotta/10"
+            span = icon
+            span.text-sm.font-medium.hidden.sm:inline = type.capitalize
+
+    .ml-auto.text-sm.text-navy/50.hidden.lg:block
+      | Cliquez sur + pour ajouter une recette
+
+/ Tabs
+.flex.gap-2.mb-8
+  = link_to recipes_path, class: "px-6 py-3 rounded-xl font-semibold transition-all duration-200 #{action_name != 'favorites' ? 'bg-terracotta text-white shadow-md' : 'bg-white text-navy hover:bg-cream'}"
+    span.mr-2 📖
+    | Toutes
+    span.ml-2.px-2.py-0.5.rounded-full.text-xs class="#{action_name != 'favorites' ? 'bg-white/20' : 'bg-navy/10'}"
+      = current_user.recipes.count
+  
+  = link_to favorites_recipes_path, class: "px-6 py-3 rounded-xl font-semibold transition-all duration-200 #{action_name == 'favorites' ? 'bg-terracotta text-white shadow-md' : 'bg-white text-navy hover:bg-cream'}"
+    span.mr-2 ⭐
+    | Favorites
+    span.ml-2.px-2.py-0.5.rounded-full.text-xs class="#{action_name == 'favorites' ? 'bg-white/20' : 'bg-navy/10'}"
+      = current_user.recipes.favorites.count
+
+/ Recipes grid
+- if @recipes.any?
+  .grid.sm:grid-cols-2.lg:grid-cols-3.gap-6 data-controller="recipe-grid"
+    - @recipes.each do |recipe|
+      .card.card-hover.overflow-hidden.group.relative
+        / Bouton d'ajout rapide
+        button.absolute.top-4.left-4.z-10.w-12.h-12.rounded-xl.bg-sage.text-white.shadow-lg.flex.items-center.justify-center.text-2xl.transition-all.hover:bg-sage-dark.hover:scale-110.active:scale-95.cursor-pointer type="button" data-action="click->recipe-grid#addToPlan" data-recipe-id=recipe.id data-recipe-title=recipe.title title="Ajouter au planning"
+          | +
+
+        / Card header avec actions
+        .relative.bg-gradient-to-br.from-cream.to-cream-dark.p-6.pb-12.pl-20
+          / Favorite button
+          = link_to toggle_favorite_recipe_path(recipe), data: { turbo_method: :patch }, class: "absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 #{recipe.is_favorite? ? 'bg-terracotta text-white shadow-md' : 'bg-white/80 text-navy/40 hover:text-terracotta hover:bg-white'}"
+            - if recipe.is_favorite?
+              span.text-lg ★
+            - else
+              span.text-lg ☆
+          
+          / Recipe icon
+          .w-16.h-16.bg-white.rounded-2xl.shadow-md.flex.items-center.justify-center.text-3xl.mb-4
+            | 🍳
+          
+          h2.font-display.font-bold.text-xl.text-navy.group-hover:text-terracotta.transition-colors.line-clamp-2
+            = link_to recipe.title, recipe_path(recipe)
+
+        / Card body
+        .p-6.-mt-6.relative
+          .bg-white.rounded-xl.shadow-sm.p-4.space-y-3
+            - if recipe.preparation_time
+              .flex.items-center.gap-2.text-sm.text-navy/70
+                span ⏱️
+                span.font-medium
+                  = recipe.preparation_time
+                  |  min
+
+            .flex.items-center.gap-2.text-sm.text-navy/70
+              span 🥕
+              span.font-medium
+                = recipe.ingredients.size
+                |  ingrédient(s)
+
+            .flex.items-center.gap-2.text-sm.text-navy/70
+              span 📝
+              span.font-medium
+                = recipe.steps.size
+                |  étape(s)
+
+        / Card footer
+        .px-6.pb-6.flex.gap-2
+          = link_to recipe_path(recipe), class: "btn btn-sm btn-outline flex-1"
+            | Voir
+          = link_to edit_recipe_path(recipe), class: "btn btn-sm btn-ghost"
+            | ✏️
+          = link_to recipe_path(recipe), data: { turbo_method: :delete, turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette recette ?" }, class: "btn btn-sm btn-ghost text-red-500 hover:bg-red-50"
+            | 🗑️
+
+- else
+  .card.p-12
+    .empty-state
+      .text-7xl.mb-6 📖
+      h2.text-2xl.font-display.font-bold.text-navy.mb-3
+        - if action_name == "favorites"
+          | Aucune recette favorite
+        - else
+          | Aucune recette encore
+      p.text-navy/60.mb-8.max-w-md.mx-auto
+        - if action_name == "favorites"
+          | Ajoutez des recettes à vos favoris en cliquant sur l'étoile ⭐
+        - else
+          | Commencez par créer votre première recette et partagez vos meilleures idées culinaires !
+      
+      - if action_name != "favorites"
+        = link_to new_recipe_path, class: "btn btn-primary btn-lg"
+          span ✨
+          span Créer ma première recette
+
+/ Formulaire caché pour l'ajout rapide
+= form_with url: quick_add_meal_plans_path, method: :post, id: "quick-add-form", class: "hidden" do |f|
+  = f.hidden_field :recipe_id, id: "quick-add-recipe-id"
+  = f.hidden_field :date, id: "quick-add-date"
+  = f.hidden_field :meal_type, id: "quick-add-meal-type"
+
+/ Toast de confirmation
+#toast.fixed.bottom-6.left-1/2.-translate-x-1/2.z-50.transition-all.duration-300.opacity-0.translate-y-4.pointer-events-none
+  .bg-sage.text-white.px-6.py-4.rounded-2xl.shadow-2xl.flex.items-center.gap-3
+    span.text-2xl ✓
+    span#toast-message Recette ajoutée !

@@ -1,0 +1,91 @@
+/ Breadcrumb
+.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+  = link_to "Événements", meal_events_path, class: "hover:text-terracotta transition-colors"
+  span /
+  span.text-navy = @meal_event.title
+
+.grid.lg:grid-cols-3.gap-8
+
+  / Main content
+  .lg:col-span-2.space-y-8
+    / Hero card
+    .card.overflow-hidden
+      .bg-gradient-to-br.from-terracotta.via-terracotta-dark.to-mustard.p-8.text-white.relative
+        .absolute.top-0.right-0.opacity-10.text-9xl.transform.rotate-12 🎉
+        
+        .relative
+          .inline-block.px-3.py-1.bg-white/20.rounded-full.text-sm.font-medium.mb-4
+            - days_until = (@meal_event.date - Date.today).to_i
+            - if days_until < 0
+              | Événement passé
+            - elsif days_until == 0
+              | 🎊 C'est aujourd'hui !
+            - elsif days_until == 1
+              | Demain !
+            - else
+              | Dans #{days_until} jours
+
+          h1.font-display.font-bold.text-3xl.md:text-4xl.mb-6 = @meal_event.title
+
+          .flex.flex-wrap.gap-4
+            .flex.items-center.gap-2.bg-white/20.rounded-xl.px-4.py-2
+              span 📅
+              span.font-medium = l(@meal_event.date, format: :long)
+            
+            - if @meal_event.guests_count
+              .flex.items-center.gap-2.bg-white/20.rounded-xl.px-4.py-2
+                span 👥
+                span.font-medium
+                  = @meal_event.guests_count
+                  |  invité(s)
+
+    / Event details
+    .card.p-8
+      h2.section-title.flex.items-center.gap-3.mb-6
+        .w-10.h-10.bg-sage/20.rounded-xl.flex.items-center.justify-center
+          span 📋
+        | Détails de l'événement
+
+      .grid.sm:grid-cols-2.gap-6
+        .p-4.bg-cream/50.rounded-xl
+          .text-sm.text-navy/60.mb-1 Date
+          .font-semibold.text-navy.text-lg = l(@meal_event.date, format: :long)
+
+        - if @meal_event.guests_count
+          .p-4.bg-cream/50.rounded-xl
+            .text-sm.text-navy/60.mb-1 Nombre d'invités
+            .font-semibold.text-navy.text-lg
+              = @meal_event.guests_count
+              |  personne(s)
+
+  / Sidebar
+  .space-y-6
+    / Actions card
+    .card.p-6
+      h3.font-semibold.text-navy.mb-4 Actions
+      .space-y-3
+        = link_to edit_meal_event_path(@meal_event), class: "btn btn-primary w-full"
+          span ✏️
+          span Modifier
+        = link_to new_meal_plan_path(date: @meal_event.date), class: "btn btn-secondary w-full"
+          span 🍽️
+          span Planifier le repas
+        = link_to meal_event_path(@meal_event), data: { turbo_method: :delete, turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet événement ?" }, class: "btn btn-danger w-full"
+          span 🗑️
+          span Supprimer
+
+    / Calendar preview
+    .card.p-6.bg-gradient-to-br.from-cream.to-white
+      h3.font-semibold.text-navy.mb-4 Calendrier
+      .text-center.p-4.bg-white.rounded-xl.shadow-inner
+        .text-sm.font-medium.uppercase.tracking-wide.text-navy/50
+          = l(@meal_event.date, format: "%B %Y")
+        .text-5xl.font-display.font-bold.text-terracotta.my-2
+          = @meal_event.date.day
+        .text-lg.text-navy
+          = l(@meal_event.date, format: "%A")
+
+    / Back link
+    = link_to meal_events_path, class: "btn btn-outline w-full"
+      span ←
+      span Retour aux événements

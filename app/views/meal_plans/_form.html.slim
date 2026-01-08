@@ -1,0 +1,114 @@
+.grid.lg:grid-cols-3.gap-8
+  / Main form
+  .lg:col-span-2
+    = form_with model: @meal_plan, class: "space-y-6" do |f|
+      - if @meal_plan.errors.any?
+        .card.bg-red-50.border-red-200.p-6.mb-6
+          .flex.items-start.gap-4
+            .w-10.h-10.bg-red-100.rounded-xl.flex.items-center.justify-center.text-red-500
+              span ⚠️
+            div
+              h3.font-semibold.text-red-800.mb-2
+                = "#{@meal_plan.errors.count} erreur(s) à corriger"
+              ul.text-sm.text-red-600.space-y-1
+                - @meal_plan.errors.full_messages.each do |message|
+                  li = message
+
+      .card.p-8.space-y-6
+        h2.section-title.flex.items-center.gap-3.mb-2
+          span 📅
+          | Planifier un repas
+
+        .space-y-5
+          .form-group
+            = f.label :date, class: "form-label"
+              span Date
+              span.text-terracotta.ml-1 *
+            = f.date_field :date, required: true, class: "form-input", value: @meal_plan.date || params[:date]
+
+          .form-group
+            = f.label :meal_type, class: "form-label"
+              span Type de repas
+              span.text-terracotta.ml-1 *
+            .grid.grid-cols-2.sm:grid-cols-4.gap-3
+              - MealPlan::MEAL_TYPES.each do |type|
+                - icon = type == 'breakfast' ? '🌅' : type == 'lunch' ? '☀️' : type == 'dinner' ? '🌙' : '🍪'
+                - bg_class = type == 'breakfast' ? 'peer-checked:bg-mustard peer-checked:border-mustard' : type == 'lunch' ? 'peer-checked:bg-sage peer-checked:border-sage' : type == 'dinner' ? 'peer-checked:bg-terracotta peer-checked:border-terracotta' : 'peer-checked:bg-navy peer-checked:border-navy'
+                label.cursor-pointer
+                  = f.radio_button :meal_type, type, class: "peer sr-only"
+                  .p-4.rounded-xl.border-2.border-cream-dark.text-center.transition-all.peer-checked:text-white class=bg_class
+                    .text-2xl.mb-1 = icon
+                    .text-sm.font-medium = type.capitalize
+
+          .form-group
+            = f.label :recipe_id, class: "form-label"
+              span Recette
+              span.text-terracotta.ml-1 *
+            
+            - if @recipes.any?
+              .space-y-2
+                - @recipes.each do |recipe|
+                  label.cursor-pointer.block
+                    = f.radio_button :recipe_id, recipe.id, class: "peer sr-only"
+                    .p-4.rounded-xl.border-2.border-cream-dark.transition-all.peer-checked:border-terracotta.peer-checked:bg-terracotta/5.hover:bg-cream/50
+                      .flex.items-center.gap-4
+                        .w-12.h-12.bg-cream.rounded-xl.flex.items-center.justify-center.text-2xl
+                          | 🍳
+                        .flex-1.min-w-0
+                          h4.font-semibold.text-navy = recipe.title
+                          .flex.items-center.gap-4.text-sm.text-navy/60.mt-1
+                            - if recipe.preparation_time
+                              span
+                                | ⏱️ #{recipe.preparation_time} min
+                            span
+                              | 🥕 #{recipe.ingredients.size} ingrédients
+                        .flex-shrink-0.w-6.h-6.rounded-full.border-2.border-cream-dark.peer-checked:border-terracotta.peer-checked:bg-terracotta.flex.items-center.justify-center
+                          .w-2.h-2.rounded-full.bg-white.opacity-0.peer-checked:opacity-100
+            - else
+              .p-8.bg-cream/50.rounded-xl.text-center
+                .text-4xl.mb-4 📖
+                p.text-navy/60.mb-4 Vous n'avez pas encore de recettes
+                = link_to new_recipe_path, class: "btn btn-primary"
+                  span ✨
+                  span Créer une recette
+
+      / Actions
+      - if @recipes.any?
+        .flex.flex-col.sm:flex-row.gap-4.pt-4
+          = f.submit class: "btn btn-primary flex-1 sm:flex-none"
+          = link_to "Annuler", (@meal_plan.persisted? ? meal_plan_path(@meal_plan) : meal_plans_path), class: "btn btn-outline"
+
+  / Sidebar
+  .space-y-6
+    .card.p-6.bg-gradient-to-br.from-sage/10.to-sage/5
+      .flex.items-center.gap-3.mb-4
+        .w-10.h-10.bg-sage/20.rounded-xl.flex.items-center.justify-center
+          span 💡
+        h3.font-semibold.text-navy Conseil
+
+      p.text-sm.text-navy/70
+        | Planifiez vos repas à l'avance pour gagner du temps et éviter le stress du "qu'est-ce qu'on mange ce soir ?"
+
+    .card.p-6
+      .flex.items-center.gap-3.mb-4
+        .w-10.h-10.bg-mustard/30.rounded-xl.flex.items-center.justify-center
+          span 🍽️
+        h3.font-semibold.text-navy Types de repas
+
+      ul.space-y-3.text-sm.text-navy/70
+        li.flex.items-center.gap-2
+          span 🌅
+          span.font-medium Breakfast
+          span.text-navy/50 — Petit-déjeuner
+        li.flex.items-center.gap-2
+          span ☀️
+          span.font-medium Lunch
+          span.text-navy/50 — Déjeuner
+        li.flex.items-center.gap-2
+          span 🌙
+          span.font-medium Dinner
+          span.text-navy/50 — Dîner
+        li.flex.items-center.gap-2
+          span 🍪
+          span.font-medium Snack
+          span.text-navy/50 — En-cas

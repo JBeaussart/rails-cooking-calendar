@@ -1,0 +1,14 @@
+/ Breadcrumb
+.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+  = link_to "Événements", meal_events_path, class: "hover:text-terracotta transition-colors"
+  span /
+  span.text-navy Nouvel événement
+
+/ Header
+.mb-8
+  h1.page-title.flex.items-center.gap-3
+    span 🎉
+    | Nouvel événement
+  p.text-navy/60.mt-2 Créez un événement pour organiser vos repas spéciaux
+
+= render "form"

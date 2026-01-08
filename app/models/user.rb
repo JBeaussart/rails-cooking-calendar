@@ -4,5 +4,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  enum role: { user: 0, premium: 1, admin: 2 }
+  has_many :recipes, dependent: :destroy
+  has_many :meal_events, dependent: :destroy
+  has_many :meal_plans, dependent: :destroy
+
+  enum :role, { user: 0, premium: 1, admin: 2 }, default: :user
 end

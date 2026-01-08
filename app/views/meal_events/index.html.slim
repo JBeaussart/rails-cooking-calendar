@@ -1,0 +1,103 @@
+/ Header
+.flex.flex-col.md:flex-row.md:items-center.md:justify-between.gap-6.mb-8
+  div
+    h1.page-title.flex.items-center.gap-3
+      span 🎉
+      | Mes événements
+    p.text-navy/60.mt-2 Organisez vos repas de fête et réceptions
+
+  = link_to new_meal_event_path, class: "btn btn-primary"
+    span ✨
+    span Nouvel événement
+
+/ Events
+- if @meal_events.any?
+  / Upcoming events
+  - upcoming = @meal_events.where("date >= ?", Date.today)
+  - past = @meal_events.where("date < ?", Date.today)
+
+  - if upcoming.any?
+    .mb-12
+      h2.section-title.flex.items-center.gap-3.mb-6
+        .w-8.h-8.bg-sage/20.rounded-lg.flex.items-center.justify-center.text-sage
+          span 📅
+        | À venir
+
+      .grid.sm:grid-cols-2.lg:grid-cols-3.gap-6
+        - upcoming.each do |event|
+          .card.card-hover.overflow-hidden.group
+            / Date badge
+            .bg-gradient-to-br.from-terracotta.to-terracotta-dark.p-6.text-white.relative
+              .absolute.top-4.right-4.opacity-20.text-6xl 🎉
+              .relative
+                .text-sm.font-medium.uppercase.tracking-wide.opacity-80
+                  = l(event.date, format: "%A")
+                .text-4xl.font-display.font-bold
+                  = event.date.day
+                .text-lg
+                  = l(event.date, format: "%B %Y")
+
+            .p-6
+              h3.font-display.font-bold.text-xl.text-navy.group-hover:text-terracotta.transition-colors.mb-3
+                = link_to event.title, meal_event_path(event)
+
+              - if event.guests_count
+                .flex.items-center.gap-2.text-navy/70.mb-4
+                  span 👥
+                  span.font-medium
+                    = event.guests_count
+                    |  invité(s)
+
+              / Countdown
+              - days_until = (event.date - Date.today).to_i
+              .p-3.bg-cream/50.rounded-xl.text-center.mb-4
+                - if days_until == 0
+                  span.font-bold.text-terracotta C'est aujourd'hui ! 🎊
+                - elsif days_until == 1
+                  span.text-navy/70 C'est 
+                  span.font-bold.text-terracotta demain
+                  |  !
+                - else
+                  span.text-navy/70 Dans 
+                  span.font-bold.text-terracotta = days_until
+                  |  jours
+
+              .flex.gap-2
+                = link_to meal_event_path(event), class: "btn btn-sm btn-outline flex-1"
+                  | Voir
+                = link_to edit_meal_event_path(event), class: "btn btn-sm btn-ghost"
+                  | ✏️
+                = link_to meal_event_path(event), data: { turbo_method: :delete, turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet événement ?" }, class: "btn btn-sm btn-ghost text-red-500 hover:bg-red-50"
+                  | 🗑️
+
+  - if past.any?
+    div
+      h2.section-title.flex.items-center.gap-3.mb-6
+        .w-8.h-8.bg-navy/10.rounded-lg.flex.items-center.justify-center.text-navy/50
+          span 📜
+        span.text-navy/50 Passés
+
+      .grid.sm:grid-cols-2.lg:grid-cols-3.gap-6.opacity-60
+        - past.limit(6).each do |event|
+          .card.p-6
+            .flex.items-start.gap-4
+              .w-14.h-14.bg-cream.rounded-xl.flex.flex-col.items-center.justify-center.text-navy/50
+                .text-xs.uppercase = l(event.date, format: "%b")
+                .font-bold = event.date.day
+              div
+                h3.font-semibold.text-navy/70.mb-1 = event.title
+                p.text-sm.text-navy/50 = l(event.date, format: :long)
+                - if event.guests_count
+                  p.text-sm.text-navy/50
+                    | 👥 #{event.guests_count} invité(s)
+
+- else
+  .card.p-12
+    .empty-state
+      .text-7xl.mb-6 🎉
+      h2.text-2xl.font-display.font-bold.text-navy.mb-3 Aucun événement prévu
+      p.text-navy/60.mb-8.max-w-md.mx-auto
+        | Créez des événements pour organiser vos repas de fête, anniversaires, ou dîners entre amis !
+      = link_to new_meal_event_path, class: "btn btn-primary"
+        span ✨
+        span Créer mon premier événement

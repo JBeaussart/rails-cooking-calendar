@@ -1,0 +1,109 @@
+fr:
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      long: "%A %d %B %Y"
+      short: "%d %b"
+    day_names:
+      - dimanche
+      - lundi
+      - mardi
+      - mercredi
+      - jeudi
+      - vendredi
+      - samedi
+    abbr_day_names:
+      - dim
+      - lun
+      - mar
+      - mer
+      - jeu
+      - ven
+      - sam
+    month_names:
+      - ~
+      - janvier
+      - février
+      - mars
+      - avril
+      - mai
+      - juin
+      - juillet
+      - août
+      - septembre
+      - octobre
+      - novembre
+      - décembre
+    abbr_month_names:
+      - ~
+      - jan.
+      - fév.
+      - mar.
+      - avr.
+      - mai
+      - juin
+      - juil.
+      - août
+      - sept.
+      - oct.
+      - nov.
+      - déc.
+
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+      long: "%A %d %B %Y %H:%M"
+      short: "%d %b %H:%M"
+
+  helpers:
+    submit:
+      create: "Créer"
+      update: "Mettre à jour"
+      submit: "Enregistrer"
+    label:
+      recipe:
+        title: "Titre"
+        preparation_time: "Temps de préparation"
+        ingredients: "Ingrédients"
+        steps: "Étapes"
+        is_favorite: "Favori"
+      meal_event:
+        title: "Titre"
+        date: "Date"
+        guests_count: "Nombre d'invités"
+      meal_plan:
+        date: "Date"
+        meal_type: "Type de repas"
+        recipe_id: "Recette"
+
+  activerecord:
+    models:
+      recipe:
+        one: "Recette"
+        other: "Recettes"
+      meal_event:
+        one: "Événement"
+        other: "Événements"
+      meal_plan:
+        one: "Repas planifié"
+        other: "Repas planifiés"
+    attributes:
+      recipe:
+        title: "Titre"
+        preparation_time: "Temps de préparation"
+        ingredients: "Ingrédients"
+        steps: "Étapes"
+        is_favorite: "Favori"
+      meal_event:
+        title: "Titre"
+        date: "Date"
+        guests_count: "Nombre d'invités"
+      meal_plan:
+        date: "Date"
+        meal_type: "Type de repas"
+        recipe: "Recette"
+    errors:
+      messages:
+        blank: "ne peut pas être vide"
+        taken: "est déjà utilisé"
+        invalid: "n'est pas valide"

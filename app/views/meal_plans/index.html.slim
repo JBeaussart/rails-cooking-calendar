@@ -1,0 +1,110 @@
+/ Header
+.flex.flex-col.md:flex-row.md:items-center.md:justify-between.gap-6.mb-8
+  div
+    h1.page-title.flex.items-center.gap-3
+      span 🗓️
+      | Ma planification
+    p.text-navy/60.mt-2 Organisez vos repas de la semaine
+
+  = link_to new_meal_plan_path, class: "btn btn-primary"
+    span ✨
+    span Planifier un repas
+
+/ Week navigation
+- current_week_start = params[:week] ? Date.parse(params[:week]) : Date.today.beginning_of_week
+- current_week_end = current_week_start.end_of_week
+
+.flex.items-center.justify-between.mb-8
+  = link_to meal_plans_path(week: (current_week_start - 7.days).to_s), class: "btn btn-ghost"
+    span ←
+    span.hidden.sm:inline Semaine précédente
+
+  .text-center
+    h2.text-xl.font-display.font-bold.text-navy
+      = l(current_week_start, format: "%d %B")
+      |  —
+      = l(current_week_end, format: "%d %B %Y")
+    - if current_week_start == Date.today.beginning_of_week
+      span.badge.badge-sage.mt-2 Cette semaine
+
+  = link_to meal_plans_path(week: (current_week_start + 7.days).to_s), class: "btn btn-ghost"
+    span.hidden.sm:inline Semaine suivante
+    span →
+
+/ Week calendar
+- week_plans = @meal_plans.where(date: current_week_start..current_week_end).group_by(&:date)
+.grid.gap-4
+
+  / Desktop view
+  .hidden.lg:grid.lg:grid-cols-7.gap-4
+    - (current_week_start..current_week_end).each do |date|
+      - day_plans = week_plans[date] || []
+      - is_today = date == Date.today
+      - is_past = date < Date.today
+      
+      .card.overflow-hidden class="#{is_today ? 'ring-2 ring-terracotta' : ''} #{is_past ? 'opacity-60' : ''}"
+        / Day header
+        .p-3.text-center class="#{is_today ? 'bg-terracotta text-white' : 'bg-cream'}"
+          .text-xs.font-semibold.uppercase.tracking-wide class="#{is_today ? 'text-white/80' : 'text-navy/50'}"
+            = l(date, format: "%a")
+          .text-2xl.font-display.font-bold class="#{is_today ? 'text-white' : 'text-navy'}"
+            = date.day
+
+        / Meals
+        .p-3.min-h-32.space-y-2
+          - if day_plans.any?
+            - day_plans.sort_by { |p| MealPlan::MEAL_TYPES.index(p.meal_type) || 99 }.each do |plan|
+              .group.relative
+                = link_to meal_plan_path(plan), class: "block p-2 rounded-lg transition-colors #{plan.meal_type == 'breakfast' ? 'bg-mustard/20 hover:bg-mustard/30' : plan.meal_type == 'lunch' ? 'bg-sage/20 hover:bg-sage/30' : plan.meal_type == 'dinner' ? 'bg-terracotta/10 hover:bg-terracotta/20' : 'bg-navy/5 hover:bg-navy/10'}"
+                  .flex.items-center.gap-1.text-xs.font-medium.mb-1 class="#{plan.meal_type == 'breakfast' ? 'text-mustard-dark' : plan.meal_type == 'lunch' ? 'text-sage-dark' : plan.meal_type == 'dinner' ? 'text-terracotta' : 'text-navy/60'}"
+                    = plan.meal_type == 'breakfast' ? '🌅' : plan.meal_type == 'lunch' ? '☀️' : plan.meal_type == 'dinner' ? '🌙' : '🍪'
+                    = plan.meal_type.capitalize
+                  .text-xs.text-navy.font-medium.truncate = plan.recipe.title
+          - elsif !is_past
+            .h-full.flex.items-center.justify-center
+              = link_to new_meal_plan_path(date: date), class: "w-8 h-8 rounded-lg bg-cream hover:bg-sage/20 flex items-center justify-center text-navy/40 hover:text-sage transition-colors"
+                | +
+
+  / Mobile view
+  .lg:hidden.space-y-4
+    - (current_week_start..current_week_end).each do |date|
+      - day_plans = week_plans[date] || []
+      - is_today = date == Date.today
+      - is_past = date < Date.today
+
+      .card.overflow-hidden class="#{is_today ? 'ring-2 ring-terracotta' : ''} #{is_past ? 'opacity-60' : ''}"
+        .flex.items-stretch
+          / Date column
+          .w-20.flex-shrink-0.p-4.flex.flex-col.items-center.justify-center class="#{is_today ? 'bg-terracotta text-white' : 'bg-cream'}"
+            .text-xs.font-semibold.uppercase.tracking-wide class="#{is_today ? 'text-white/80' : 'text-navy/50'}"
+              = l(date, format: "%a")
+            .text-3xl.font-display.font-bold class="#{is_today ? 'text-white' : 'text-navy'}"
+              = date.day
+
+          / Meals column
+          .flex-1.p-4
+            - if day_plans.any?
+              .flex.flex-wrap.gap-2
+                - day_plans.sort_by { |p| MealPlan::MEAL_TYPES.index(p.meal_type) || 99 }.each do |plan|
+                  = link_to meal_plan_path(plan), class: "inline-flex items-center gap-2 px-3 py-2 rounded-lg transition-colors #{plan.meal_type == 'breakfast' ? 'bg-mustard/20 hover:bg-mustard/30' : plan.meal_type == 'lunch' ? 'bg-sage/20 hover:bg-sage/30' : plan.meal_type == 'dinner' ? 'bg-terracotta/10 hover:bg-terracotta/20' : 'bg-navy/5 hover:bg-navy/10'}"
+                    span = plan.meal_type == 'breakfast' ? '🌅' : plan.meal_type == 'lunch' ? '☀️' : plan.meal_type == 'dinner' ? '🌙' : '🍪'
+                    span.text-sm.font-medium.text-navy = plan.recipe.title
+            - elsif !is_past
+              = link_to new_meal_plan_path(date: date), class: "text-sm text-navy/40 hover:text-sage transition-colors"
+                | + Ajouter un repas
+
+/ Legend
+.card.p-4.mt-8
+  .flex.flex-wrap.items-center.justify-center.gap-6.text-sm
+    .flex.items-center.gap-2
+      .w-4.h-4.rounded.bg-mustard/30
+      span.text-navy/70 🌅 Petit-déjeuner
+    .flex.items-center.gap-2
+      .w-4.h-4.rounded.bg-sage/30
+      span.text-navy/70 ☀️ Déjeuner
+    .flex.items-center.gap-2
+      .w-4.h-4.rounded.bg-terracotta/20
+      span.text-navy/70 🌙 Dîner
+    .flex.items-center.gap-2
+      .w-4.h-4.rounded.bg-navy/10
+      span.text-navy/70 🍪 Snack
