@@ -98,3 +98,8 @@
 @utility nav-link-active {
   @apply bg-terracotta/10 text-terracotta;
 }
+
+/* Safe area for iPhone notch/home indicator */
+@utility safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
