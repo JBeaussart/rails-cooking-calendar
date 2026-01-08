@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   end
 
   resources :meal_events
-  resources :meal_plans do
+  resources :meal_plans, except: [ :show ] do
     collection do
       post :quick_add
     end

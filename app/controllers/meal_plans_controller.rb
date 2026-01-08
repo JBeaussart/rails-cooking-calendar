@@ -1,6 +1,6 @@
 class MealPlansController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_meal_plan, only: %i[show edit update destroy]
+  before_action :set_meal_plan, only: %i[edit update destroy]
 
   def quick_add
     @meal_plan = current_user.meal_plans.find_or_initialize_by(
@@ -23,9 +23,6 @@ class MealPlansController < ApplicationController
     @meal_plans = current_user.meal_plans.includes(:recipe).order(date: :asc)
   end
 
-  def show
-  end
-
   def new
     @meal_plan = current_user.meal_plans.build
     @recipes = current_user.recipes
@@ -35,7 +32,7 @@ class MealPlansController < ApplicationController
     @meal_plan = current_user.meal_plans.build(meal_plan_params)
 
     if @meal_plan.save
-      redirect_to @meal_plan, notice: "Repas planifié avec succès."
+      redirect_to meal_plans_path, notice: "Repas planifié avec succès."
     else
       @recipes = current_user.recipes
       render :new, status: :unprocessable_entity
@@ -48,7 +45,7 @@ class MealPlansController < ApplicationController
 
   def update
     if @meal_plan.update(meal_plan_params)
-      redirect_to @meal_plan, notice: "Planification mise à jour avec succès."
+      redirect_to meal_plans_path, notice: "Planification mise à jour avec succès."
     else
       @recipes = current_user.recipes
       render :edit, status: :unprocessable_entity

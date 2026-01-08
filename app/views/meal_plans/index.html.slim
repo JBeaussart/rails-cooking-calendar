@@ -12,25 +12,25 @@
         span 📖
         span Mes recettes
 
-/ Week navigation
-- current_week_start = params[:week] ? Date.parse(params[:week]) : Date.today.beginning_of_week
-- current_week_end = current_week_start.end_of_week
+/ Week navigation (starts from today or selected date)
+- current_week_start = params[:week] ? Date.parse(params[:week]) : Date.today
+- current_week_end = current_week_start + 6.days
 
 .flex.items-center.justify-between.mb-6
   = link_to meal_plans_path(week: (current_week_start - 7.days).to_s), class: "btn btn-ghost btn-sm"
     span ←
-    span.hidden.sm:inline Semaine précédente
+    span.hidden.sm:inline 7 jours avant
 
   .text-center
     h2.text-lg.font-display.font-bold.text-navy
       = l(current_week_start, format: "%d %B")
       |  —
       = l(current_week_end, format: "%d %B %Y")
-    - if current_week_start == Date.today.beginning_of_week
-      span.badge.badge-sage.mt-1 Cette semaine
+    - if current_week_start == Date.today
+      span.badge.badge-sage.mt-1 À partir d'aujourd'hui
 
   = link_to meal_plans_path(week: (current_week_start + 7.days).to_s), class: "btn btn-ghost btn-sm"
-    span.hidden.sm:inline Semaine suivante
+    span.hidden.sm:inline 7 jours après
     span →
 
 / Week calendar
@@ -57,7 +57,7 @@
           - if day_plans.any?
             - day_plans.sort_by { |p| MealPlan::MEAL_TYPES.index(p.meal_type) || 99 }.each do |plan|
               .group.relative
-                = link_to meal_plan_path(plan), class: "block p-2 rounded-lg transition-colors #{plan.meal_type == 'breakfast' ? 'bg-mustard/20 hover:bg-mustard/30' : plan.meal_type == 'lunch' ? 'bg-sage/20 hover:bg-sage/30' : plan.meal_type == 'dinner' ? 'bg-terracotta/10 hover:bg-terracotta/20' : 'bg-navy/5 hover:bg-navy/10'}"
+                = link_to edit_meal_plan_path(plan), class: "block p-2 rounded-lg transition-colors #{plan.meal_type == 'breakfast' ? 'bg-mustard/20 hover:bg-mustard/30' : plan.meal_type == 'lunch' ? 'bg-sage/20 hover:bg-sage/30' : plan.meal_type == 'dinner' ? 'bg-terracotta/10 hover:bg-terracotta/20' : 'bg-navy/5 hover:bg-navy/10'}"
                   .flex.items-center.gap-1.text-xs.font-medium.mb-1 class="#{plan.meal_type == 'breakfast' ? 'text-mustard-dark' : plan.meal_type == 'lunch' ? 'text-sage-dark' : plan.meal_type == 'dinner' ? 'text-terracotta' : 'text-navy/60'}"
                     = plan.meal_type == 'breakfast' ? '🌅' : plan.meal_type == 'lunch' ? '☀️' : plan.meal_type == 'dinner' ? '🌙' : '🍪'
                     = plan.meal_type.capitalize
@@ -88,7 +88,7 @@
             - if day_plans.any?
               .flex.flex-wrap.gap-2
                 - day_plans.sort_by { |p| MealPlan::MEAL_TYPES.index(p.meal_type) || 99 }.each do |plan|
-                  = link_to meal_plan_path(plan), class: "inline-flex items-center gap-2 px-3 py-2 rounded-lg transition-colors #{plan.meal_type == 'breakfast' ? 'bg-mustard/20 hover:bg-mustard/30' : plan.meal_type == 'lunch' ? 'bg-sage/20 hover:bg-sage/30' : plan.meal_type == 'dinner' ? 'bg-terracotta/10 hover:bg-terracotta/20' : 'bg-navy/5 hover:bg-navy/10'}"
+                  = link_to edit_meal_plan_path(plan), class: "inline-flex items-center gap-2 px-3 py-2 rounded-lg transition-colors #{plan.meal_type == 'breakfast' ? 'bg-mustard/20 hover:bg-mustard/30' : plan.meal_type == 'lunch' ? 'bg-sage/20 hover:bg-sage/30' : plan.meal_type == 'dinner' ? 'bg-terracotta/10 hover:bg-terracotta/20' : 'bg-navy/5 hover:bg-navy/10'}"
                     span = plan.meal_type == 'breakfast' ? '🌅' : plan.meal_type == 'lunch' ? '☀️' : plan.meal_type == 'dinner' ? '🌙' : '🍪'
                     span.text-sm.font-medium.text-navy = plan.recipe.title
             - elsif !is_past

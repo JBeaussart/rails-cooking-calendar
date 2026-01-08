@@ -2,9 +2,7 @@
 .flex.items-center.gap-2.text-sm.text-navy/60.mb-6
   = link_to "Planification", meal_plans_path, class: "hover:text-terracotta transition-colors"
   span /
-  = link_to l(@meal_plan.date, format: :long), meal_plan_path(@meal_plan), class: "hover:text-terracotta transition-colors"
-  span /
-  span.text-navy Modifier
+  span.text-navy Modifier le repas du #{l(@meal_plan.date, format: :long)}
 
 / Header
 .mb-8

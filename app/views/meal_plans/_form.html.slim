@@ -76,7 +76,10 @@
       - if @recipes.any?
         .flex.flex-col.sm:flex-row.gap-4.pt-4
           = f.submit class: "btn btn-primary flex-1 sm:flex-none"
-          = link_to "Annuler", (@meal_plan.persisted? ? meal_plan_path(@meal_plan) : meal_plans_path), class: "btn btn-outline"
+          - if @meal_plan.persisted?
+            = link_to meal_plan_path(@meal_plan), data: { turbo_method: :delete, turbo_confirm: "Supprimer ce repas planifié ?" }, class: "btn btn-danger"
+              | Supprimer
+          = link_to "Annuler", meal_plans_path, class: "btn btn-outline"
 
   / Sidebar
   .space-y-6
