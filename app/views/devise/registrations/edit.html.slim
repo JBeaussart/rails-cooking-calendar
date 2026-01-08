@@ -1,133 +1,141 @@
-/ Breadcrumb
-.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+/ Mobile back button
+.sm:hidden.mb-4
+  = link_to root_path, class: "inline-flex items-center gap-2 text-sm text-navy/70 hover:text-terracotta transition-colors"
+    span ←
+    span Retour
+
+/ Breadcrumb (tablet+)
+.hidden.sm:flex.items-center.gap-2.text-sm.text-navy/60.mb-6
   = link_to "Accueil", root_path, class: "hover:text-terracotta transition-colors"
   span /
   span.text-navy Mon compte
 
 / Header
-.mb-8
-  h1.page-title.flex.items-center.gap-3
-    span 👤
+.mb-6.sm:mb-8
+  h1.text-xl.sm:text-2xl.lg:text-3xl.font-display.font-bold.text-navy.flex.items-center.gap-2.sm:gap-3
+    span.text-lg.sm:text-2xl 👤
     | Mon compte
-  p.text-navy/60.mt-2 Gérez vos informations personnelles
+  p.text-navy/60.mt-1.sm:mt-2.text-sm.sm:text-base Gérez vos informations personnelles
 
-/ Stats
-.grid.grid-cols-2.md:grid-cols-4.gap-4.mb-8
-  .card.p-4.text-center.card-hover
+/ Stats - 2x2 on mobile, 4 columns on tablet+
+.grid.grid-cols-2.md:grid-cols-4.gap-3.sm:gap-4.mb-6.sm:mb-8
+  .card.p-3.sm:p-4.text-center.card-hover
     = link_to recipes_path, class: "block"
-      .text-2xl.mb-1 📖
-      .text-xl.font-display.font-bold.text-navy = current_user.recipes.count
+      .text-xl.sm:text-2xl.mb-1 📖
+      .text-lg.sm:text-xl.font-display.font-bold.text-navy = current_user.recipes.count
       .text-xs.text-navy/60 Recettes
-  .card.p-4.text-center.card-hover
+  .card.p-3.sm:p-4.text-center.card-hover
     = link_to favorites_recipes_path, class: "block"
-      .text-2xl.mb-1 ⭐
-      .text-xl.font-display.font-bold.text-terracotta = current_user.recipes.favorites.count
+      .text-xl.sm:text-2xl.mb-1 ⭐
+      .text-lg.sm:text-xl.font-display.font-bold.text-terracotta = current_user.recipes.favorites.count
       .text-xs.text-navy/60 Favoris
-  .card.p-4.text-center.card-hover
+  .card.p-3.sm:p-4.text-center.card-hover
     = link_to meal_plans_path, class: "block"
-      .text-2xl.mb-1 🗓️
-      .text-xl.font-display.font-bold.text-sage = current_user.meal_plans.where("date >= ?", Date.today).count
+      .text-xl.sm:text-2xl.mb-1 🗓️
+      .text-lg.sm:text-xl.font-display.font-bold.text-sage = current_user.meal_plans.where("date >= ?", Date.today).count
       .text-xs.text-navy/60 Repas prévus
-  .card.p-4.text-center.card-hover
+  .card.p-3.sm:p-4.text-center.card-hover
     = link_to meal_events_path, class: "block"
-      .text-2xl.mb-1 🎉
-      .text-xl.font-display.font-bold.text-mustard-dark = current_user.meal_events.where("date >= ?", Date.today).count
+      .text-xl.sm:text-2xl.mb-1 🎉
+      .text-lg.sm:text-xl.font-display.font-bold.text-mustard-dark = current_user.meal_events.where("date >= ?", Date.today).count
       .text-xs.text-navy/60 Événements
 
-.grid.lg:grid-cols-3.gap-8
+/ Main content - stacked on mobile, 2/3 + 1/3 on desktop
+.grid.lg:grid-cols-3.gap-4.sm:gap-8
   / Main form
-  .lg:col-span-2.space-y-6
-    = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-6" }) do |f|
+  .lg:col-span-2.space-y-4.sm:space-y-6
+    = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-4 sm:space-y-6" }) do |f|
       = render "devise/shared/error_messages", resource: resource
 
       / Email section
-      .card.p-8
-        h2.section-title.flex.items-center.gap-3.mb-6
-          .w-10.h-10.bg-sage/20.rounded-xl.flex.items-center.justify-center
+      .card.p-4.sm:p-8
+        h2.text-base.sm:text-lg.font-display.font-bold.text-navy.flex.items-center.gap-2.sm:gap-3.mb-4.sm:mb-6
+          .w-8.h-8.sm:w-10.sm:h-10.bg-sage/20.rounded-lg.sm:rounded-xl.flex.items-center.justify-center
             span 📧
           | Informations
 
-        .space-y-5
+        .space-y-4.sm:space-y-5
           .form-group
-            = f.label :email, class: "form-label"
+            = f.label :email, class: "form-label text-sm sm:text-base"
               | Email
-            = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input"
+            = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input text-base"
             - if devise_mapping.confirmable? && resource.pending_reconfirmation?
-              p.text-sm.text-mustard-dark.mt-2
+              p.text-xs.sm:text-sm.text-mustard-dark.mt-2
                 | En attente de confirmation pour : #{resource.unconfirmed_email}
 
       / Password section
-      .card.p-8
-        h2.section-title.flex.items-center.gap-3.mb-6
-          .w-10.h-10.bg-terracotta/10.rounded-xl.flex.items-center.justify-center
+      .card.p-4.sm:p-8
+        h2.text-base.sm:text-lg.font-display.font-bold.text-navy.flex.items-center.gap-2.sm:gap-3.mb-4.sm:mb-6
+          .w-8.h-8.sm:w-10.sm:h-10.bg-terracotta/10.rounded-lg.sm:rounded-xl.flex.items-center.justify-center
             span 🔒
           | Changer le mot de passe
 
-        p.text-sm.text-navy/60.mb-6 Laissez vide si vous ne souhaitez pas changer votre mot de passe
+        p.text-xs.sm:text-sm.text-navy/60.mb-4.sm:mb-6 Laissez vide si vous ne souhaitez pas changer
 
-        .space-y-5
+        .space-y-4.sm:space-y-5
           .form-group
-            = f.label :password, class: "form-label"
+            = f.label :password, class: "form-label text-sm sm:text-base"
               | Nouveau mot de passe
-            = f.password_field :password, autocomplete: "new-password", class: "form-input", placeholder: "••••••••"
+            = f.password_field :password, autocomplete: "new-password", class: "form-input text-base", placeholder: "••••••••"
             - if @minimum_password_length
-              p.text-sm.text-navy/50.mt-2
+              p.text-xs.sm:text-sm.text-navy/50.mt-2
                 | Minimum #{@minimum_password_length} caractères
 
           .form-group
-            = f.label :password_confirmation, class: "form-label"
+            = f.label :password_confirmation, class: "form-label text-sm sm:text-base"
               | Confirmer le nouveau mot de passe
-            = f.password_field :password_confirmation, autocomplete: "new-password", class: "form-input", placeholder: "••••••••"
+            = f.password_field :password_confirmation, autocomplete: "new-password", class: "form-input text-base", placeholder: "••••••••"
 
       / Current password for confirmation
-      .card.p-8.bg-cream/50
-        h2.section-title.flex.items-center.gap-3.mb-6
-          .w-10.h-10.bg-mustard/30.rounded-xl.flex.items-center.justify-center
+      .card.p-4.sm:p-8.bg-cream/50
+        h2.text-base.sm:text-lg.font-display.font-bold.text-navy.flex.items-center.gap-2.sm:gap-3.mb-4.sm:mb-6
+          .w-8.h-8.sm:w-10.sm:h-10.bg-mustard/30.rounded-lg.sm:rounded-xl.flex.items-center.justify-center
             span ✓
           | Confirmation
 
         .form-group
-          = f.label :current_password, class: "form-label"
+          = f.label :current_password, class: "form-label text-sm sm:text-base"
             | Mot de passe actuel
             span.text-terracotta.ml-1 *
-          = f.password_field :current_password, autocomplete: "current-password", class: "form-input", placeholder: "••••••••"
-          p.text-sm.text-navy/50.mt-2 Requis pour valider les modifications
+          = f.password_field :current_password, autocomplete: "current-password", class: "form-input text-base", placeholder: "••••••••"
+          p.text-xs.sm:text-sm.text-navy/50.mt-2 Requis pour valider les modifications
 
-        .mt-6
-          = f.submit "Mettre à jour", class: "btn btn-primary"
+        .mt-4.sm:mt-6
+          = f.submit "Mettre à jour", class: "btn btn-primary w-full sm:w-auto"
 
   / Sidebar
-  .space-y-6
-    / Account info
-    .card.p-6
-      h3.font-semibold.text-navy.mb-4 Mon compte
+  .space-y-4.sm:space-y-6
+    / Account info (hidden on mobile, shown on tablet+)
+    .hidden.sm:block.card.p-4.sm:p-6
+      h3.font-semibold.text-navy.mb-4.text-sm.sm:text-base Mon compte
       .space-y-3.text-sm
         .flex.items-center.gap-3.p-3.bg-cream/50.rounded-lg
-          .w-10.h-10.bg-sage/20.rounded-full.flex.items-center.justify-center.text-sage
+          .w-8.h-8.sm:w-10.sm:h-10.bg-sage/20.rounded-full.flex.items-center.justify-center.text-sage
             | 👤
-          div
-            .text-navy/60 Connecté en tant que
-            .font-medium.text-navy.truncate = resource.email
+          div.min-w-0
+            .text-navy/60.text-xs Connecté en tant que
+            .font-medium.text-navy.truncate.text-sm = resource.email
 
         .flex.items-center.gap-3.p-3.bg-cream/50.rounded-lg
-          .w-10.h-10.bg-mustard/20.rounded-full.flex.items-center.justify-center
+          .w-8.h-8.sm:w-10.sm:h-10.bg-mustard/20.rounded-full.flex.items-center.justify-center
             | 📅
           div
-            .text-navy/60 Membre depuis
-            .font-medium.text-navy = l(resource.created_at, format: "%B %Y")
+            .text-navy/60.text-xs Membre depuis
+            .font-medium.text-navy.text-sm = l(resource.created_at, format: "%B %Y")
 
     / Danger zone
-    .card.p-6.border-red-200
-      h3.font-semibold.text-red-600.mb-4.flex.items-center.gap-2
+    .card.p-4.sm:p-6.border-red-200
+      h3.font-semibold.text-red-600.mb-3.sm:mb-4.flex.items-center.gap-2.text-sm.sm:text-base
         span ⚠️
         | Zone dangereuse
 
-      p.text-sm.text-navy/60.mb-4
-        | La suppression de votre compte est irréversible. Toutes vos recettes, planifications et événements seront perdus.
+      p.text-xs.sm:text-sm.text-navy/60.mb-3.sm:mb-4
+        | La suppression est irréversible. Toutes vos données seront perdues.
 
-      = button_to "Supprimer mon compte", registration_path(resource_name), data: { turbo_confirm: "Êtes-vous sûr ? Cette action est irréversible et supprimera toutes vos données." }, method: :delete, class: "btn btn-danger w-full"
+      = button_to "Supprimer mon compte", registration_path(resource_name), data: { turbo_confirm: "Êtes-vous sûr ? Cette action est irréversible." }, method: :delete, class: "btn btn-danger w-full text-sm sm:text-base"
 
-    / Back link
-    = link_to root_path, class: "btn btn-outline w-full"
-      span ←
-      span Retour à l'accueil
+    / Back link (hidden on mobile as we have back button at top)
+    .hidden.sm:block
+      = link_to root_path, class: "btn btn-outline w-full justify-center"
+        span ←
+        span Retour à l'accueil

@@ -28,15 +28,15 @@ html lang="fr"
     / Navigation
     - if user_signed_in?
       nav.fixed.top-0.left-0.right-0.z-50.bg-white/80.backdrop-blur-lg.border-b.border-cream-dark
-        .max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8
-          .flex.items-center.justify-between.h-16
+        .max-w-7xl.mx-auto.px-3.sm:px-6.lg:px-8
+          .flex.items-center.justify-between.h-14.sm:h-16
             / Logo
-            = link_to root_path, class: "flex items-center gap-3 group"
-              .w-10.h-10.bg-gradient-to-br.from-terracotta.to-mustard.rounded-xl.flex.items-center.justify-center.shadow-md.group-hover:shadow-lg.transition-shadow
-                span.text-xl 🍳
-              span.font-display.font-bold.text-xl.text-navy.hidden.sm:block Cooking Calendar
+            = link_to root_path, class: "flex items-center gap-2 sm:gap-3 group"
+              .w-9.h-9.sm:w-10.sm:h-10.bg-gradient-to-br.from-terracotta.to-mustard.rounded-xl.flex.items-center.justify-center.shadow-md.group-hover:shadow-lg.transition-shadow
+                span.text-lg.sm:text-xl 🍳
+              span.font-display.font-bold.text-lg.sm:text-xl.text-navy.hidden.sm:block Cooking Calendar
 
-            / Navigation principale
+            / Navigation principale (desktop only)
             .hidden.md:flex.items-center.gap-1
               = link_to root_path, class: "nav-link #{controller_name == 'meal_plans' ? 'nav-link-active' : ''}"
                 span 🗓️
@@ -48,61 +48,74 @@ html lang="fr"
                 span 🎉
                 span Événements
 
-            / User menu
-            .flex.items-center.gap-4
-              = link_to edit_user_registration_path, class: "hidden sm:flex items-center gap-2 text-sm text-navy/70 hover:text-terracotta transition-colors"
+            / Right side actions
+            .flex.items-center.gap-2.sm:gap-4
+              / User menu (desktop)
+              = link_to edit_user_registration_path, class: "hidden md:flex items-center gap-2 text-sm text-navy/70 hover:text-terracotta transition-colors"
                 span.w-8.h-8.bg-sage/20.rounded-full.flex.items-center.justify-center.text-sage
                   | 👤
                 span.truncate.max-w-32 = current_user.email
-              = link_to "Déconnexion", destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn-ghost btn-sm"
+              = link_to "Déconnexion", destroy_user_session_path, data: { turbo_method: :delete }, class: "hidden md:inline-flex btn btn-ghost btn-sm"
 
-            / Mobile menu button
-            button.md:hidden.p-2.rounded-lg.hover:bg-cream type="button" data-controller="mobile-menu" data-action="click->mobile-menu#toggle"
-              svg.w-6.h-6.text-navy xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"
+              / Mobile menu button
+              button.md:hidden.p-2.rounded-lg.hover:bg-cream.active:bg-cream-dark.transition-colors type="button" data-controller="mobile-menu" data-action="click->mobile-menu#toggle"
+                svg.w-6.h-6.text-navy xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"
 
-      / Mobile navigation
-      #mobile-nav.hidden.md:hidden.fixed.inset-0.z-40.bg-cream/95.backdrop-blur-lg.pt-20
-        .flex.flex-col.gap-2.p-6
-          = link_to root_path, class: "nav-link text-lg #{controller_name == 'meal_plans' ? 'nav-link-active' : ''}"
-            span 🗓️
-            span Planification
-          = link_to recipes_path, class: "nav-link text-lg #{controller_name == 'recipes' ? 'nav-link-active' : ''}"
-            span 📖
-            span Recettes
-          = link_to meal_events_path, class: "nav-link text-lg #{controller_name == 'meal_events' ? 'nav-link-active' : ''}"
-            span 🎉
-            span Événements
-          hr.my-4.border-cream-dark
-          = link_to edit_user_registration_path, class: "nav-link text-lg"
-            span 👤
-            span Mon compte
-          = link_to "Déconnexion", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link text-lg text-red-500"
+      / Mobile navigation (slide-in menu)
+      #mobile-nav.hidden.md:hidden.fixed.inset-0.z-40.bg-cream/98.backdrop-blur-lg.pt-16
+        .flex.flex-col.h-full.overflow-y-auto
+          / Main nav links
+          .flex.flex-col.gap-1.p-4
+            = link_to root_path, class: "flex items-center gap-3 px-4 py-3 rounded-xl text-lg font-medium transition-colors #{controller_name == 'meal_plans' ? 'bg-terracotta text-white' : 'text-navy hover:bg-cream-dark'}"
+              span.text-xl 🗓️
+              span Planning
+            = link_to recipes_path, class: "flex items-center gap-3 px-4 py-3 rounded-xl text-lg font-medium transition-colors #{controller_name == 'recipes' ? 'bg-terracotta text-white' : 'text-navy hover:bg-cream-dark'}"
+              span.text-xl 📖
+              span Recettes
+            = link_to meal_events_path, class: "flex items-center gap-3 px-4 py-3 rounded-xl text-lg font-medium transition-colors #{controller_name == 'meal_events' ? 'bg-terracotta text-white' : 'text-navy hover:bg-cream-dark'}"
+              span.text-xl 🎉
+              span Événements
+
+          / User section
+          .mt-auto.p-4.border-t.border-cream-dark
+            .flex.items-center.gap-3.px-4.py-3.mb-2
+              .w-10.h-10.bg-sage/20.rounded-full.flex.items-center.justify-center
+                | 👤
+              .flex-1.min-w-0
+                .text-sm.text-navy/60 Connecté
+                .font-medium.text-navy.truncate = current_user.email
+            = link_to edit_user_registration_path, class: "flex items-center gap-3 px-4 py-3 rounded-xl text-navy hover:bg-cream-dark transition-colors"
+              span ⚙️
+              span Mon compte
+            = link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors"
+              span 🚪
+              span Se déconnecter
 
     / Flash messages container (pour turbo_stream)
     #flash-messages
 
     / Flash messages classiques
     - if notice.present?
-      .fixed.top-20.left-1/2.-translate-x-1/2.z-50.animate-fade-in data-controller="auto-remove" data-auto-remove-delay-value="4000"
-        .bg-sage.text-white.px-6.py-3.rounded-xl.shadow-lg.flex.items-center.gap-3
+      .fixed.top-16.sm:top-20.left-4.right-4.sm:left-1/2.sm:-translate-x-1/2.sm:left-auto.sm:right-auto.sm:w-auto.z-50.animate-fade-in data-controller="auto-remove" data-auto-remove-delay-value="4000"
+        .bg-sage.text-white.px-4.sm:px-6.py-3.rounded-xl.shadow-lg.flex.items-center.gap-3
           span ✓
-          span = notice
+          span.text-sm.sm:text-base = notice
 
     - if alert.present?
-      .fixed.top-20.left-1/2.-translate-x-1/2.z-50.animate-fade-in data-controller="auto-remove" data-auto-remove-delay-value="5000"
-        .bg-terracotta.text-white.px-6.py-3.rounded-xl.shadow-lg.flex.items-center.gap-3
+      .fixed.top-16.sm:top-20.left-4.right-4.sm:left-1/2.sm:-translate-x-1/2.sm:left-auto.sm:right-auto.sm:w-auto.z-50.animate-fade-in data-controller="auto-remove" data-auto-remove-delay-value="5000"
+        .bg-terracotta.text-white.px-4.sm:px-6.py-3.rounded-xl.shadow-lg.flex.items-center.gap-3
           span ⚠
-          span = alert
+          span.text-sm.sm:text-base = alert
 
     / Main content
-    main class="#{user_signed_in? ? 'pt-24 pb-12' : ''} min-h-screen"
-      .max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8
+    main class="#{user_signed_in? ? 'pt-18 sm:pt-24 pb-8 sm:pb-12' : ''} min-h-screen"
+      .max-w-7xl.mx-auto.px-3.sm:px-6.lg:px-8
         = yield
 
-    / Footer
+    / Footer (desktop only)
     - if user_signed_in?
-      footer.bg-white.border-t.border-cream-dark.mt-auto
+      footer.hidden.sm:block.bg-white.border-t.border-cream-dark.mt-auto
         .max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8.py-8
           .flex.flex-col.sm:flex-row.items-center.justify-between.gap-4
             .flex.items-center.gap-2.text-navy/50.text-sm

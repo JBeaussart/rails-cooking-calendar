@@ -1,17 +1,37 @@
-/ Breadcrumb
-.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+/ Breadcrumb (hidden on mobile, shown on tablet+)
+.hidden.sm:flex.items-center.gap-2.text-sm.text-navy/60.mb-6
   = link_to "Planification", meal_plans_path, class: "hover:text-terracotta transition-colors"
   span /
-  span.text-navy Modifier le repas du #{l(@meal_plan.date, format: :long)}
+  span.text-navy Modifier le repas
+
+/ Mobile back button
+.sm:hidden.mb-4
+  = link_to meal_plans_path, class: "inline-flex items-center gap-2 text-sm text-navy/70 hover:text-terracotta transition-colors"
+    span ←
+    span Retour
 
 / Header
-.mb-8
-  h1.page-title.flex.items-center.gap-3
-    span ✏️
-    | Modifier la planification
-  p.text-navy/60.mt-2
-    = l(@meal_plan.date, format: :long)
-    |  —
-    = @meal_plan.recipe.title
+.mb-6
+  h1.text-xl.sm:text-2xl.lg:text-3xl.font-display.font-bold.text-navy.flex.items-center.gap-2.sm:gap-3
+    span.text-lg.sm:text-2xl ✏️
+    | Modifier
+  .mt-2.p-3.bg-cream.rounded-xl.border.border-cream-dark
+    .flex.items-center.gap-3
+      .w-10.h-10.bg-terracotta/10.rounded-lg.flex.items-center.justify-center.text-lg
+        | 🍽️
+      div
+        .font-medium.text-navy.line-clamp-1 = @meal_plan.recipe.title
+        .text-sm.text-navy/60 = l(@meal_plan.date, format: :long)
+
+/ Action buttons - Mobile first: full width stacked, tablet+: inline
+.grid.grid-cols-1.sm:flex.sm:flex-wrap.gap-2.sm:gap-3.mb-8
+  button type="submit" form="meal_plan_form" class="btn btn-primary justify-center"
+    span 💾
+    span Enregistrer les modifications
+  = link_to meal_plan_path(@meal_plan), data: { turbo_method: :delete, turbo_confirm: "Retirer cette recette du #{l(@meal_plan.date, format: :long)} ?" }, class: "btn btn-danger justify-center"
+    span 🗑️
+    span Retirer du planning
+  = link_to meal_plans_path, class: "btn btn-outline justify-center sm:ml-auto"
+    span Annuler
 
 = render "form"

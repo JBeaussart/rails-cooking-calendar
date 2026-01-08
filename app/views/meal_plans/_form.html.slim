@@ -1,88 +1,83 @@
-.grid.lg:grid-cols-3.gap-8
+/ Mobile: single column, Desktop: 2/3 + 1/3
+.grid.lg:grid-cols-3.gap-4.sm:gap-8
   / Main form
   .lg:col-span-2
-    = form_with model: @meal_plan, class: "space-y-6" do |f|
+    = form_with model: @meal_plan, id: "meal_plan_form", class: "space-y-4 sm:space-y-6" do |f|
       - if @meal_plan.errors.any?
-        .card.bg-red-50.border-red-200.p-6.mb-6
-          .flex.items-start.gap-4
-            .w-10.h-10.bg-red-100.rounded-xl.flex.items-center.justify-center.text-red-500
+        .card.bg-red-50.border-red-200.p-4.sm:p-6.mb-4.sm:mb-6
+          .flex.items-start.gap-3.sm:gap-4
+            .w-8.h-8.sm:w-10.sm:h-10.bg-red-100.rounded-xl.flex.items-center.justify-center.text-red-500.flex-shrink-0
               span ⚠️
             div
-              h3.font-semibold.text-red-800.mb-2
-                = "#{@meal_plan.errors.count} erreur(s) à corriger"
-              ul.text-sm.text-red-600.space-y-1
+              h3.font-semibold.text-red-800.mb-1.sm:mb-2.text-sm.sm:text-base
+                = "#{@meal_plan.errors.count} erreur(s)"
+              ul.text-xs.sm:text-sm.text-red-600.space-y-1
                 - @meal_plan.errors.full_messages.each do |message|
                   li = message
 
-      .card.p-8.space-y-6
-        h2.section-title.flex.items-center.gap-3.mb-2
+      .card.p-4.sm:p-8.space-y-4.sm:space-y-6
+        h2.text-lg.sm:text-xl.font-display.font-bold.text-navy.flex.items-center.gap-2.sm:gap-3.mb-1.sm:mb-2
           span 📅
           | Planifier un repas
 
-        .space-y-5
+        .space-y-4.sm:space-y-5
           .form-group
-            = f.label :date, class: "form-label"
+            = f.label :date, class: "form-label text-sm sm:text-base"
               span Date
               span.text-terracotta.ml-1 *
-            = f.date_field :date, required: true, class: "form-input", value: @meal_plan.date || params[:date]
+            = f.date_field :date, required: true, class: "form-input text-base", value: @meal_plan.date || params[:date]
 
           .form-group
-            = f.label :meal_type, class: "form-label"
+            = f.label :meal_type, class: "form-label text-sm sm:text-base"
               span Type de repas
               span.text-terracotta.ml-1 *
-            .grid.grid-cols-2.sm:grid-cols-4.gap-3
+            / 2x2 grid on mobile, 4 columns on larger screens
+            .grid.grid-cols-2.sm:grid-cols-4.gap-2.sm:gap-3
               - MealPlan::MEAL_TYPES.each do |type|
                 - icon = type == 'breakfast' ? '🌅' : type == 'lunch' ? '☀️' : type == 'dinner' ? '🌙' : '🍪'
                 - bg_class = type == 'breakfast' ? 'peer-checked:bg-mustard peer-checked:border-mustard' : type == 'lunch' ? 'peer-checked:bg-sage peer-checked:border-sage' : type == 'dinner' ? 'peer-checked:bg-terracotta peer-checked:border-terracotta' : 'peer-checked:bg-navy peer-checked:border-navy'
                 label.cursor-pointer
                   = f.radio_button :meal_type, type, class: "peer sr-only"
-                  .p-4.rounded-xl.border-2.border-cream-dark.text-center.transition-all.peer-checked:text-white class=bg_class
-                    .text-2xl.mb-1 = icon
-                    .text-sm.font-medium = type.capitalize
+                  .p-3.sm:p-4.rounded-xl.border-2.border-cream-dark.text-center.transition-all.peer-checked:text-white class=bg_class
+                    .text-xl.sm:text-2xl.mb-0.5.sm:mb-1 = icon
+                    .text-xs.sm:text-sm.font-medium = type.capitalize
 
           .form-group
-            = f.label :recipe_id, class: "form-label"
+            = f.label :recipe_id, class: "form-label text-sm sm:text-base"
               span Recette
               span.text-terracotta.ml-1 *
             
             - if @recipes.any?
-              .space-y-2
+              .space-y-2.max-h-64.sm:max-h-96.overflow-y-auto.pr-1
                 - @recipes.each do |recipe|
                   label.cursor-pointer.block
                     = f.radio_button :recipe_id, recipe.id, class: "peer sr-only"
-                    .p-4.rounded-xl.border-2.border-cream-dark.transition-all.peer-checked:border-terracotta.peer-checked:bg-terracotta/5.hover:bg-cream/50
-                      .flex.items-center.gap-4
-                        .w-12.h-12.bg-cream.rounded-xl.flex.items-center.justify-center.text-2xl
+                    .p-3.sm:p-4.rounded-xl.border-2.border-cream-dark.transition-all.peer-checked:border-terracotta.peer-checked:bg-terracotta/5.hover:bg-cream/50
+                      .flex.items-center.gap-3.sm:gap-4
+                        .w-10.h-10.sm:w-12.sm:h-12.bg-cream.rounded-xl.flex.items-center.justify-center.text-xl.sm:text-2xl.flex-shrink-0
                           | 🍳
                         .flex-1.min-w-0
-                          h4.font-semibold.text-navy = recipe.title
-                          .flex.items-center.gap-4.text-sm.text-navy/60.mt-1
+                          h4.font-semibold.text-navy.text-sm.sm:text-base.truncate = recipe.title
+                          .flex.items-center.gap-2.sm:gap-4.text-xs.sm:text-sm.text-navy/60.mt-0.5.sm:mt-1
                             - if recipe.preparation_time
-                              span
-                                | ⏱️ #{recipe.preparation_time} min
-                            span
-                              | 🥕 #{recipe.ingredients.size} ingrédients
-                        .flex-shrink-0.w-6.h-6.rounded-full.border-2.border-cream-dark.peer-checked:border-terracotta.peer-checked:bg-terracotta.flex.items-center.justify-center
-                          .w-2.h-2.rounded-full.bg-white.opacity-0.peer-checked:opacity-100
+                              span ⏱️ #{recipe.preparation_time}min
+                            span 🥕 #{recipe.ingredients.size}
             - else
-              .p-8.bg-cream/50.rounded-xl.text-center
-                .text-4xl.mb-4 📖
-                p.text-navy/60.mb-4 Vous n'avez pas encore de recettes
-                = link_to new_recipe_path, class: "btn btn-primary"
+              .p-6.sm:p-8.bg-cream/50.rounded-xl.text-center
+                .text-3xl.sm:text-4xl.mb-3.sm:mb-4 📖
+                p.text-navy/60.mb-3.sm:mb-4.text-sm.sm:text-base Aucune recette
+                = link_to new_recipe_path, class: "btn btn-primary btn-sm sm:btn-md"
                   span ✨
                   span Créer une recette
 
-      / Actions
-      - if @recipes.any?
-        .flex.flex-col.sm:flex-row.gap-4.pt-4
-          = f.submit class: "btn btn-primary flex-1 sm:flex-none"
-          - if @meal_plan.persisted?
-            = link_to meal_plan_path(@meal_plan), data: { turbo_method: :delete, turbo_confirm: "Supprimer ce repas planifié ?" }, class: "btn btn-danger"
-              | Supprimer
-          = link_to "Annuler", meal_plans_path, class: "btn btn-outline"
+      / Actions (only for new meal plans)
+      - if @recipes.any? && !@meal_plan.persisted?
+        .grid.grid-cols-2.sm:flex.sm:flex-row.gap-3.sm:gap-4.pt-2.sm:pt-4
+          = f.submit class: "btn btn-primary col-span-2 sm:flex-none justify-center"
+          = link_to "Annuler", meal_plans_path, class: "btn btn-outline col-span-2 sm:col-span-1 justify-center"
 
-  / Sidebar
-  .space-y-6
+  / Sidebar (hidden on mobile by default, could be collapsible)
+  .hidden.lg:block.space-y-6
     .card.p-6.bg-gradient-to-br.from-sage/10.to-sage/5
       .flex.items-center.gap-3.mb-4
         .w-10.h-10.bg-sage/20.rounded-xl.flex.items-center.justify-center

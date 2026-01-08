@@ -1,16 +1,22 @@
-/ Breadcrumb
-.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+/ Mobile back button
+.sm:hidden.mb-4
+  = link_to recipe_path(@recipe), class: "inline-flex items-center gap-2 text-sm text-navy/70 hover:text-terracotta transition-colors"
+    span ←
+    span Retour
+
+/ Breadcrumb (tablet+)
+.hidden.sm:flex.items-center.gap-2.text-sm.text-navy/60.mb-6
   = link_to "Recettes", recipes_path, class: "hover:text-terracotta transition-colors"
   span /
-  = link_to @recipe.title, recipe_path(@recipe), class: "hover:text-terracotta transition-colors"
+  = link_to @recipe.title, recipe_path(@recipe), class: "hover:text-terracotta transition-colors truncate max-w-32"
   span /
   span.text-navy Modifier
 
 / Header
-.mb-8
-  h1.page-title.flex.items-center.gap-3
-    span ✏️
-    | Modifier la recette
-  p.text-navy/60.mt-2 = @recipe.title
+.mb-6.sm:mb-8
+  h1.text-xl.sm:text-2xl.lg:text-3xl.font-display.font-bold.text-navy.flex.items-center.gap-2.sm:gap-3
+    span.text-lg.sm:text-2xl ✏️
+    | Modifier
+  p.text-navy/60.mt-1.sm:mt-2.text-sm.sm:text-base.truncate = @recipe.title
 
 = render "form"

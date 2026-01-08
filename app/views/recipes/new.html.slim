@@ -1,14 +1,20 @@
-/ Breadcrumb
-.flex.items-center.gap-2.text-sm.text-navy/60.mb-6
+/ Mobile back button
+.sm:hidden.mb-4
+  = link_to recipes_path, class: "inline-flex items-center gap-2 text-sm text-navy/70 hover:text-terracotta transition-colors"
+    span ←
+    span Recettes
+
+/ Breadcrumb (tablet+)
+.hidden.sm:flex.items-center.gap-2.text-sm.text-navy/60.mb-6
   = link_to "Recettes", recipes_path, class: "hover:text-terracotta transition-colors"
   span /
   span.text-navy Nouvelle recette
 
 / Header
-.mb-8
-  h1.page-title.flex.items-center.gap-3
-    span ✨
+.mb-6.sm:mb-8
+  h1.text-xl.sm:text-2xl.lg:text-3xl.font-display.font-bold.text-navy.flex.items-center.gap-2.sm:gap-3
+    span.text-lg.sm:text-2xl ✨
     | Nouvelle recette
-  p.text-navy/60.mt-2 Créez une nouvelle recette pour votre famille
+  p.text-navy/60.mt-1.sm:mt-2.text-sm.sm:text-base Créez une nouvelle recette pour votre famille
 
 = render "form"
