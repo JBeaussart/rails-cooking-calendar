@@ -28,7 +28,7 @@
                   | #{@recipe.preparation_time} min
               .badge.bg-white/20.text-white.text-xs.sm:text-sm
                 span.mr-1 🥕
-                | #{@recipe.ingredients.size} ingr.
+                | #{@recipe.ingredients.count} ingr.
               .badge.bg-white/20.text-white.text-xs.sm:text-sm
                 span.mr-1 📝
                 | #{@recipe.steps.size} étapes
@@ -45,10 +45,15 @@
         | Ingrédients
 
       ul.grid.grid-cols-1.sm:grid-cols-2.gap-2.sm:gap-3
-        - @recipe.ingredients.each do |ingredient|
+        - @recipe.recipe_ingredients.includes(:ingredient).each do |ri|
           li.flex.items-center.gap-2.sm:gap-3.p-2.sm:p-3.bg-cream/50.rounded-lg.sm:rounded-xl.hover:bg-cream.transition-colors
             .w-5.h-5.sm:w-6.sm:h-6.bg-sage.rounded-full.flex.items-center.justify-center.text-white.text-xs.flex-shrink-0 ✓
-            span.text-navy.text-sm.sm:text-base = ingredient
+            .flex.items-baseline.gap-1.text-navy.text-sm.sm:text-base
+              - if ri.quantity.present?
+                span.font-semibold = ri.quantity
+                - if ri.unit.present?
+                  span.text-navy/60 = ri.unit
+              span = ri.ingredient.name
 
     / Steps
     .card.p-4.sm:p-8

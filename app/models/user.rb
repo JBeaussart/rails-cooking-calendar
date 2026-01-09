@@ -5,6 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :recipes, dependent: :destroy
+  has_many :ingredients, dependent: :destroy
   has_many :meal_events, dependent: :destroy
   has_many :meal_plans, dependent: :destroy
 

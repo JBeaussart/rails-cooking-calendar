@@ -20,18 +20,18 @@ class MealPlansController < ApplicationController
   end
 
   def index
-    @meal_plans = current_user.meal_plans.includes(:recipe).order(date: :asc)
+    @meal_plans = current_user.meal_plans.includes(recipe: :ingredients).order(date: :asc)
   end
 
   def edit
-    @recipes = current_user.recipes
+    @recipes = current_user.recipes.includes(:ingredients)
   end
 
   def update
     if @meal_plan.update(meal_plan_params)
       redirect_to meal_plans_path, notice: "Planification mise à jour avec succès."
     else
-      @recipes = current_user.recipes
+      @recipes = current_user.recipes.includes(:ingredients)
       render :edit, status: :unprocessable_entity
     end
   end

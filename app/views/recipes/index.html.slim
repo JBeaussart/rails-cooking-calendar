@@ -91,7 +91,7 @@ div data-controller="recipe-search recipe-grid"
     / Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns
     .grid.grid-cols-2.sm:grid-cols-3.lg:grid-cols-4.gap-3.sm:gap-4
       - @recipes.each do |recipe|
-        .card.card-hover.overflow-hidden.group.relative.flex.flex-col data-recipe-search-target="card" data-title="#{recipe.title}" data-ingredients="#{recipe.ingredients.join(' ')}"
+        .card.card-hover.overflow-hidden.group.relative.flex.flex-col data-recipe-search-target="card" data-title="#{recipe.title}" data-ingredients="#{recipe.ingredient_names.join(' ')}"
           / Header compact avec bouton + et favoris
           .relative.bg-gradient-to-br.from-cream.to-cream-dark.p-3
             / Bouton d'ajout rapide
@@ -117,7 +117,7 @@ div data-controller="recipe-search recipe-grid"
                 span.flex.items-center.gap-1
                   | ⏱️ #{recipe.preparation_time}min
               span.flex.items-center.gap-1
-                | 🥕 #{recipe.ingredients.size}
+                | 🥕 #{recipe.ingredients.count}
 
             / Actions compactes
             .flex.gap-1.mt-auto

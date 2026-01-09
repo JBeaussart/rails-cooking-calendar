@@ -100,7 +100,7 @@
                             .flex.items-center.gap-2.sm:gap-4.text-xs.sm:text-sm.text-navy/60.mt-0.5.sm:mt-1
                               - if selected_recipe.preparation_time
                                 span ⏱️ #{selected_recipe.preparation_time}min
-                              span 🥕 #{selected_recipe.ingredients.size}
+                              span 🥕 #{selected_recipe.ingredients.count}
                           .text-sage.text-xl ✓
                       - else
                         .flex.items-center.gap-3.text-navy/50
@@ -122,7 +122,7 @@
                   / Options list
                   .max-h-64.overflow-y-auto.p-2
                     - @recipes.each do |recipe|
-                      .p-3.rounded-xl.cursor-pointer.transition-all.hover:bg-cream/50 data-recipe-select-target="option" data-action="click->recipe-select#select" data-id="#{recipe.id}" data-title="#{recipe.title}" data-time="#{recipe.preparation_time}" data-ingredients="#{recipe.ingredients.size}" class="#{@meal_plan.recipe_id == recipe.id ? 'ring-2 ring-terracotta bg-terracotta/5' : ''}"
+                      .p-3.rounded-xl.cursor-pointer.transition-all.hover:bg-cream/50 data-recipe-select-target="option" data-action="click->recipe-select#select" data-id="#{recipe.id}" data-title="#{recipe.title}" data-time="#{recipe.preparation_time}" data-ingredients="#{recipe.ingredients.count}" class="#{@meal_plan.recipe_id == recipe.id ? 'ring-2 ring-terracotta bg-terracotta/5' : ''}"
                         .flex.items-center.gap-3.sm:gap-4
                           .w-10.h-10.bg-cream.rounded-xl.flex.items-center.justify-center.text-xl.flex-shrink-0
                             | 🍳
@@ -131,7 +131,7 @@
                             .flex.items-center.gap-2.sm:gap-4.text-xs.text-navy/60.mt-0.5
                               - if recipe.preparation_time
                                 span ⏱️ #{recipe.preparation_time}min
-                              span 🥕 #{recipe.ingredients.size}
+                              span 🥕 #{recipe.ingredients.count}
             - else
               .p-6.sm:p-8.bg-cream/50.rounded-xl.text-center
                 .text-3xl.sm:text-4xl.mb-3.sm:mb-4 📖
