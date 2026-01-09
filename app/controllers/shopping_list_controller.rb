@@ -27,7 +27,8 @@ class ShoppingListController < ApplicationController
 
     meal_plans.each do |meal_plan|
       meal_plan.recipe.recipe_ingredients.each do |ri|
-        key = ri.ingredient.name.downcase.strip
+        # Utiliser une clé normalisée (singulier) pour regrouper
+        key = normalize_ingredient_name(ri.ingredient.name)
         
         if ingredients_hash[key]
           # Essayer d'additionner les quantités si même unité
@@ -43,7 +44,31 @@ class ShoppingListController < ApplicationController
     end
 
     # Trier par nom
-    ingredients_hash.values.sort_by { |i| i[:name].downcase }
+    ingredients_hash.values.sort_by { |i| normalize_ingredient_name(i[:name]) }
+  end
+
+  # Normalise un nom d'ingrédient pour regrouper singulier/pluriel
+  def normalize_ingredient_name(name)
+    normalized = name.downcase.strip
+    
+    # Retirer les accents pour la comparaison
+    normalized = normalized
+      .gsub(/œ/, "oe")
+      .gsub(/æ/, "ae")
+      .unicode_normalize(:nfd)
+      .gsub(/[\u0300-\u036f]/, "")
+    
+    # Gérer les pluriels français
+    # "eaux" → "eau" (gâteaux, eaux, etc.)
+    normalized = normalized.sub(/eaux$/, "eau")
+    # "aux" → "al" (animaux → animal, mais rare pour ingrédients)
+    normalized = normalized.sub(/aux$/, "al")
+    # Retirer le "x" final (choux → chou)
+    normalized = normalized.sub(/x$/, "")
+    # Retirer le "s" final (œufs → œuf, pommes → pomme)
+    normalized = normalized.sub(/s$/, "")
+    
+    normalized
   end
 
   def merge_quantities(existing, new_ri)

@@ -7,13 +7,26 @@ export default class extends Controller {
     this.totalCount = this.cardTargets.length
   }
   
+  // Normalize text: remove accents, convert ligatures, lowercase
+  normalize(text) {
+    return text
+      .toLowerCase()
+      // Replace ligatures
+      .replace(/œ/g, 'oe')
+      .replace(/æ/g, 'ae')
+      .replace(/ß/g, 'ss')
+      // Remove accents using Unicode normalization
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+  }
+  
   filter() {
-    const query = this.inputTarget.value.toLowerCase().trim()
+    const query = this.normalize(this.inputTarget.value.trim())
     let visibleCount = 0
     
     this.cardTargets.forEach(card => {
-      const title = card.dataset.title?.toLowerCase() || ""
-      const ingredients = card.dataset.ingredients?.toLowerCase() || ""
+      const title = this.normalize(card.dataset.title || "")
+      const ingredients = this.normalize(card.dataset.ingredients || "")
       
       const matches = query === "" || title.includes(query) || ingredients.includes(query)
       card.classList.toggle("hidden", !matches)
