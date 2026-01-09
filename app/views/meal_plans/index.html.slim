@@ -58,9 +58,9 @@
         - is_today = date == Date.today
         - is_past = date < Date.today
         
-        .min-h-40.p-3.border-r.border-cream-dark/30.last:border-r-0 class="#{is_past ? 'bg-navy/5 opacity-60' : is_today ? 'bg-terracotta/5' : 'bg-white'}"
+        .min-h-40.p-3.border-r.border-cream-dark/30.last:border-r-0.flex.flex-col class="#{is_past ? 'bg-navy/5 opacity-60' : is_today ? 'bg-terracotta/5' : 'bg-white'}"
           - if day_plans.any?
-            .space-y-2
+            .space-y-2.flex-1
               - day_plans.sort_by { |p| MealPlan::MEAL_TYPES.index(p.meal_type) || 99 }.each do |plan|
                 - bg_color = plan.meal_type == 'breakfast' ? 'bg-mustard/20 hover:bg-mustard/30 border-mustard/30' : plan.meal_type == 'lunch' ? 'bg-sage/20 hover:bg-sage/30 border-sage/30' : plan.meal_type == 'dinner' ? 'bg-terracotta/10 hover:bg-terracotta/20 border-terracotta/20' : 'bg-navy/5 hover:bg-navy/10 border-navy/10'
                 - text_color = plan.meal_type == 'breakfast' ? 'text-mustard-dark' : plan.meal_type == 'lunch' ? 'text-sage-dark' : plan.meal_type == 'dinner' ? 'text-terracotta' : 'text-navy/60'
@@ -80,9 +80,9 @@
                         path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     = link_to meal_plan_path(plan), data: { turbo_method: :delete, turbo_confirm: "Retirer #{plan.recipe.title} ?" }, class: "w-7 h-7 rounded-lg bg-white shadow-sm hover:shadow hover:bg-red-50 flex items-center justify-center text-navy/50 hover:text-red-500 transition-all", title: "Retirer"
                       span.text-sm ×
-          - elsif !is_past
-            .h-full.flex.items-center.justify-center
-              = link_to new_meal_plan_path(date: date), class: "w-10 h-10 rounded-xl bg-cream hover:bg-sage/20 flex items-center justify-center text-navy/30 hover:text-sage text-xl transition-all hover:scale-110"
+          - if !is_past
+            .flex.items-center.justify-center.pt-2 class="#{day_plans.empty? ? 'flex-1' : ''}"
+              = link_to new_meal_plan_path(date: date), class: "w-8 h-8 rounded-xl bg-cream hover:bg-sage/20 flex items-center justify-center text-navy/30 hover:text-sage text-lg transition-all hover:scale-110"
                 | +
 
 / Tablet view (2 columns)
@@ -102,9 +102,9 @@
             = date.day
 
         / Meals column
-        .flex-1.p-3.min-h-16
+        .flex-1.p-3.min-h-16.flex.flex-col
           - if day_plans.any?
-            .space-y-1.5
+            .space-y-1.5.flex-1
               - day_plans.sort_by { |p| MealPlan::MEAL_TYPES.index(p.meal_type) || 99 }.each do |plan|
                 .group.flex.items-center.gap-2.p-2.rounded-lg.transition-colors class="#{plan.meal_type == 'breakfast' ? 'bg-mustard/20 hover:bg-mustard/30' : plan.meal_type == 'lunch' ? 'bg-sage/20 hover:bg-sage/30' : plan.meal_type == 'dinner' ? 'bg-terracotta/10 hover:bg-terracotta/20' : 'bg-navy/5 hover:bg-navy/10'}"
                   span.text-sm = plan.meal_type == 'breakfast' ? '🌅' : plan.meal_type == 'lunch' ? '☀️' : plan.meal_type == 'dinner' ? '🌙' : '🍪'
@@ -117,9 +117,10 @@
                         path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     = link_to meal_plan_path(plan), data: { turbo_method: :delete, turbo_confirm: "Retirer ce repas ?" }, class: "w-7 h-7 rounded-lg bg-white/80 hover:bg-red-50 flex items-center justify-center text-sm text-red-500 shadow-sm", title: "Retirer"
                       | ×
-          - elsif !is_past
-            = link_to new_meal_plan_path(date: date), class: "text-sm text-navy/40 hover:text-sage transition-colors"
-              | + Ajouter
+          - if !is_past
+            .pt-1 class="#{day_plans.empty? ? 'flex-1 flex items-center' : ''}"
+              = link_to new_meal_plan_path(date: date), class: "text-sm text-navy/40 hover:text-sage transition-colors"
+                | + Ajouter
 
 / Mobile view (1 column)
 .sm:hidden.space-y-2
@@ -138,9 +139,9 @@
             = date.day
 
         / Meals column
-        .flex-1.p-2
+        .flex-1.p-2.flex.flex-col
           - if day_plans.any?
-            .space-y-1.5
+            .space-y-1.5.flex-1
               - day_plans.sort_by { |p| MealPlan::MEAL_TYPES.index(p.meal_type) || 99 }.each do |plan|
                 .flex.items-center.gap-2.p-2.rounded-lg class="#{plan.meal_type == 'breakfast' ? 'bg-mustard/20' : plan.meal_type == 'lunch' ? 'bg-sage/20' : plan.meal_type == 'dinner' ? 'bg-terracotta/10' : 'bg-navy/5'}"
                   span.text-base = plan.meal_type == 'breakfast' ? '🌅' : plan.meal_type == 'lunch' ? '☀️' : plan.meal_type == 'dinner' ? '🌙' : '🍪'
@@ -153,8 +154,8 @@
                         path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     = link_to meal_plan_path(plan), data: { turbo_method: :delete, turbo_confirm: "Retirer #{plan.recipe.title} ?" }, class: "w-8 h-8 rounded-lg bg-white/70 active:bg-red-50 flex items-center justify-center text-lg text-red-400 shadow-sm"
                       | ×
-          - elsif !is_past
-            .flex.items-center.justify-center.h-full.py-2
+          - if !is_past
+            .py-1 class="#{day_plans.empty? ? 'flex-1 flex items-center justify-center' : ''}"
               = link_to new_meal_plan_path(date: date), class: "text-sm text-navy/40 active:text-sage"
                 | + Ajouter un repas
 
