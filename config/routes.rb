@@ -14,6 +14,9 @@ Rails.application.routes.draw do
   end
 
   resources :meal_events
+  
+  get "shopping_list", to: "shopping_list#index", as: :shopping_list
+
   resources :meal_plans, except: [ :show, :new, :create ] do
     collection do
       post :quick_add

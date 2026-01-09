@@ -1,0 +1,73 @@
+- content_for(:title) { "Liste de courses" }
+
+.py-4.sm:py-8
+  / Header
+  .flex.flex-col.sm:flex-row.sm:items-center.justify-between.gap-4.mb-6
+    div
+      h1.font-display.text-2xl.sm:text-3xl.font-bold.text-navy Liste de courses
+      p.text-navy/60.mt-1
+        - if @recipes_count > 0
+          | #{@recipes_count} repas planifiés du #{l(@date_range[:start], format: :long)} au #{l(@date_range[:end], format: :long)}
+        - else
+          | Aucun repas planifié pour les jours à venir
+
+    - if @ingredients_list.any?
+      .flex.items-center.gap-3
+        .bg-sage/20.text-sage.px-4.py-2.rounded-xl.font-medium
+          span data-shopping-list-target="counter" 0/#{@ingredients_list.size}
+          span.ml-1 cochés
+
+  - if @ingredients_list.empty?
+    / Empty state
+    .bg-white.rounded-2xl.shadow-soft.p-8.sm:p-12.text-center
+      .text-6xl.mb-4 🛒
+      h2.font-display.text-xl.font-semibold.text-navy.mb-2 Pas d'ingrédients à acheter
+      p.text-navy/60.mb-6
+        | Planifiez des repas pour voir apparaître votre liste de courses.
+      = link_to root_path, class: "btn btn-primary"
+        span 🗓️
+        span Aller au planning
+
+  - else
+    / Shopping list
+    .bg-white.rounded-2xl.shadow-soft.overflow-hidden data-controller="shopping-list"
+      / Header avec bouton reset
+      .flex.items-center.justify-between.px-4.sm:px-6.py-4.bg-cream/50.border-b.border-cream-dark
+        h2.font-display.font-semibold.text-navy
+          span 🧺
+          span.ml-2 #{@ingredients_list.size} ingrédients
+        button.text-sm.text-terracotta.hover:text-terracotta/80.transition-colors.font-medium type="button" data-action="shopping-list#clearAll"
+          | Tout décocher
+
+      / Liste des ingrédients non cochés
+      .divide-y.divide-cream-dark data-shopping-list-target="uncheckedList"
+        - @ingredients_list.each do |ingredient|
+          .flex.items-start.gap-3.sm:gap-4.px-4.sm:px-6.py-3.sm:py-4.hover:bg-cream/30.transition-colors.cursor-pointer data-shopping-list-target="item" data-ingredient-id="#{ingredient[:id]}" data-ingredient-name="#{ingredient[:name]}"
+            / Checkbox custom
+            label.relative.flex.items-center.justify-center.w-6.h-6.mt-0.5.cursor-pointer
+              input.peer.sr-only type="checkbox" data-action="shopping-list#toggle"
+              .w-6.h-6.border-2.border-navy/30.rounded-lg.peer-checked:bg-sage.peer-checked:border-sage.transition-all.flex.items-center.justify-center
+                svg.w-4.h-4.text-white.hidden.peer-checked:block xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                  path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"
+            
+            / Contenu de l'ingrédient
+            .flex-1.min-w-0
+              .flex.flex-wrap.items-baseline.gap-x-2.gap-y-1
+                span.font-medium.text-navy = ingredient[:name].capitalize
+                - ingredient[:quantities].each do |qty|
+                  - if qty[:quantity].present? || qty[:unit].present?
+                    span.text-sm.text-navy/60.bg-cream.px-2.py-0.5.rounded-full
+                      = "#{qty[:quantity]} #{qty[:unit]}".strip
+              
+              / Recettes associées
+              .text-xs.text-navy/40.mt-1.truncate
+                | Pour : #{ingredient[:quantities].map { |q| q[:recipe] }.join(", ")}
+
+      / Séparateur pour les items cochés
+      .border-t-2.border-dashed.border-cream-dark.bg-cream/30
+        .px-4.sm:px-6.py-2.text-xs.text-navy/40.font-medium.uppercase.tracking-wide
+          | ✓ Déjà dans le panier
+
+      / Liste des ingrédients cochés
+      .divide-y.divide-cream-dark.bg-cream/20 data-shopping-list-target="checkedList"
+        / Les items cochés seront déplacés ici par JavaScript

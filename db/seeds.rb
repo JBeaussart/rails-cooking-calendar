@@ -2,6 +2,24 @@
 
 puts "🌱 Seeding database..."
 
+# Helper pour parser les ingrédients
+def parse_ingredient(line)
+  # Common units to detect
+  units = %w[g kg mg ml L cl dl cuillères? cuillère tasse pincée sachet gousse tranche morceau pièce]
+  units_pattern = units.join("|")
+
+  # Try to match: quantity unit name (e.g., "200 g farine")
+  if line =~ /^([\d\/.,]+)\s*(#{units_pattern}(?:\s*à\s*(?:soupe|café))?)\s+(.+)$/i
+    { quantity: $1.strip, unit: $2.strip, name: $3.strip }
+  # Try to match: quantity name (e.g., "3 œufs")
+  elsif line =~ /^([\d\/.,]+)\s+(.+)$/
+    { quantity: $1.strip, unit: nil, name: $2.strip }
+  # Just name (e.g., "sel")
+  else
+    { quantity: nil, unit: nil, name: line.strip }
+  end
+end
+
 # Créer un utilisateur de test
 user = User.find_or_create_by!(email: "jeremy.beaussart@gmail.com") do |u|
   u.password = "aaaaaa"
@@ -15,13 +33,14 @@ recipes_data = [
   {
     title: "Poulet rôti aux herbes de Provence",
     ingredients: [
-      "1 poulet entier (1,5 kg)",
-      "3 cuillères à soupe d'herbes de Provence",
-      "4 gousses d'ail",
+      "1 poulet entier",
+      "3 cuillères à soupe herbes de Provence",
+      "4 gousses ail",
       "2 citrons",
-      "4 cuillères à soupe d'huile d'olive",
-      "Sel et poivre",
-      "1 kg de pommes de terre"
+      "4 cuillères à soupe huile d'olive",
+      "Sel",
+      "Poivre",
+      "1 kg pommes de terre"
     ],
     steps: [
       "Préchauffer le four à 200°C.",
@@ -38,13 +57,14 @@ recipes_data = [
   {
     title: "Gratin dauphinois",
     ingredients: [
-      "1 kg de pommes de terre",
-      "50 cl de crème fraîche",
-      "25 cl de lait",
-      "2 gousses d'ail",
-      "Noix de muscade",
-      "Sel et poivre",
-      "30 g de beurre"
+      "1 kg pommes de terre",
+      "50 cl crème fraîche",
+      "25 cl lait",
+      "2 gousses ail",
+      "1 pincée noix de muscade",
+      "Sel",
+      "Poivre",
+      "30 g beurre"
     ],
     steps: [
       "Préchauffer le four à 180°C.",
@@ -62,13 +82,14 @@ recipes_data = [
     title: "Quiche lorraine",
     ingredients: [
       "1 pâte brisée",
-      "200 g de lardons",
+      "200 g lardons",
       "4 œufs",
-      "25 cl de crème fraîche",
-      "15 cl de lait",
-      "100 g de gruyère râpé",
-      "Sel et poivre",
-      "Noix de muscade"
+      "25 cl crème fraîche",
+      "15 cl lait",
+      "100 g gruyère râpé",
+      "Sel",
+      "Poivre",
+      "1 pincée noix de muscade"
     ],
     steps: [
       "Préchauffer le four à 180°C.",
@@ -85,15 +106,16 @@ recipes_data = [
   {
     title: "Bœuf bourguignon",
     ingredients: [
-      "1 kg de bœuf à braiser",
-      "75 cl de vin rouge de Bourgogne",
-      "200 g de lardons",
-      "200 g de champignons",
+      "1 kg bœuf à braiser",
+      "75 cl vin rouge de Bourgogne",
+      "200 g lardons",
+      "200 g champignons",
       "20 petits oignons",
       "2 carottes",
-      "2 cuillères à soupe de farine",
-      "Bouquet garni",
-      "Sel et poivre"
+      "2 cuillères à soupe farine",
+      "1 bouquet garni",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Couper la viande en gros cubes.",
@@ -111,13 +133,13 @@ recipes_data = [
   {
     title: "Crêpes sucrées",
     ingredients: [
-      "250 g de farine",
+      "250 g farine",
       "4 œufs",
-      "50 cl de lait",
-      "50 g de beurre fondu",
-      "2 cuillères à soupe de sucre",
-      "1 pincée de sel",
-      "1 cuillère à soupe de rhum (optionnel)"
+      "50 cl lait",
+      "50 g beurre fondu",
+      "2 cuillères à soupe sucre",
+      "1 pincée sel",
+      "1 cuillère à soupe rhum"
     ],
     steps: [
       "Mettre la farine dans un saladier et former un puits.",
@@ -137,12 +159,13 @@ recipes_data = [
       "2 courgettes",
       "2 aubergines",
       "3 tomates",
-      "2 poivrons (rouge et jaune)",
+      "2 poivrons",
       "2 oignons",
-      "4 gousses d'ail",
-      "Herbes de Provence",
-      "Huile d'olive",
-      "Sel et poivre"
+      "4 gousses ail",
+      "2 cuillères à soupe herbes de Provence",
+      "3 cuillères à soupe huile d'olive",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Couper tous les légumes en dés.",
@@ -161,10 +184,10 @@ recipes_data = [
     ingredients: [
       "1 pâte feuilletée",
       "6 pommes Golden",
-      "50 g de beurre",
-      "80 g de sucre",
-      "1 sachet de sucre vanillé",
-      "Cannelle (optionnel)"
+      "50 g beurre",
+      "80 g sucre",
+      "1 sachet sucre vanillé",
+      "1 pincée cannelle"
     ],
     steps: [
       "Préchauffer le four à 200°C.",
@@ -181,15 +204,16 @@ recipes_data = [
   {
     title: "Blanquette de veau",
     ingredients: [
-      "1 kg d'épaule de veau",
+      "1 kg épaule de veau",
       "2 carottes",
       "2 poireaux",
-      "1 oignon piqué de clous de girofle",
+      "1 oignon",
+      "3 clous de girofle",
       "1 bouquet garni",
-      "200 g de champignons",
-      "30 cl de crème fraîche",
+      "200 g champignons",
+      "30 cl crème fraîche",
       "2 jaunes d'œufs",
-      "Jus d'un demi citron"
+      "1 citron"
     ],
     steps: [
       "Couper le veau en morceaux.",
@@ -206,15 +230,17 @@ recipes_data = [
   {
     title: "Lasagnes à la bolognaise",
     ingredients: [
-      "500 g de viande hachée",
-      "1 boîte de tomates pelées",
+      "500 g viande hachée",
+      "1 boîte tomates pelées",
       "2 oignons",
-      "2 gousses d'ail",
-      "Feuilles de lasagne",
-      "50 cl de béchamel",
-      "150 g de parmesan râpé",
-      "Huile d'olive",
-      "Sel, poivre, origan"
+      "2 gousses ail",
+      "12 feuilles lasagne",
+      "50 cl béchamel",
+      "150 g parmesan râpé",
+      "2 cuillères à soupe huile d'olive",
+      "Sel",
+      "Poivre",
+      "1 cuillère à café origan"
     ],
     steps: [
       "Faire revenir oignons et ail dans l'huile.",
@@ -231,10 +257,10 @@ recipes_data = [
   {
     title: "Mousse au chocolat",
     ingredients: [
-      "200 g de chocolat noir",
+      "200 g chocolat noir",
       "6 œufs",
-      "1 pincée de sel",
-      "30 g de sucre (optionnel)"
+      "1 pincée sel",
+      "30 g sucre"
     ],
     steps: [
       "Faire fondre le chocolat au bain-marie.",
@@ -251,13 +277,14 @@ recipes_data = [
   {
     title: "Soupe à l'oignon gratinée",
     ingredients: [
-      "500 g d'oignons",
-      "50 g de beurre",
-      "1 litre de bouillon de bœuf",
-      "10 cl de vin blanc",
-      "8 tranches de pain",
-      "150 g de gruyère râpé",
-      "Sel et poivre"
+      "500 g oignons",
+      "50 g beurre",
+      "1 L bouillon de bœuf",
+      "10 cl vin blanc",
+      "8 tranches pain",
+      "150 g gruyère râpé",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Émincer les oignons finement.",
@@ -274,10 +301,10 @@ recipes_data = [
   {
     title: "Pâtes carbonara",
     ingredients: [
-      "400 g de spaghetti",
-      "200 g de guanciale ou lardons",
+      "400 g spaghetti",
+      "200 g guanciale",
       "4 jaunes d'œufs",
-      "100 g de pecorino râpé",
+      "100 g pecorino râpé",
       "Poivre noir",
       "Sel"
     ],
@@ -296,14 +323,14 @@ recipes_data = [
   {
     title: "Curry de poulet",
     ingredients: [
-      "600 g de blancs de poulet",
-      "40 cl de lait de coco",
+      "600 g blancs de poulet",
+      "40 cl lait de coco",
       "2 oignons",
-      "3 gousses d'ail",
-      "2 cuillères à soupe de curry",
-      "1 cuillère à soupe de curcuma",
+      "3 gousses ail",
+      "2 cuillères à soupe curry",
+      "1 cuillère à soupe curcuma",
       "2 tomates",
-      "Huile végétale",
+      "2 cuillères à soupe huile végétale",
       "Sel"
     ],
     steps: [
@@ -321,15 +348,18 @@ recipes_data = [
   {
     title: "Salade niçoise",
     ingredients: [
-      "200 g de thon en boîte",
+      "200 g thon en boîte",
       "4 œufs durs",
-      "200 g de haricots verts",
+      "200 g haricots verts",
       "4 tomates",
       "1 concombre",
       "1 poivron",
-      "100 g d'olives noires",
-      "8 filets d'anchois",
-      "Huile d'olive, vinaigre, sel, poivre"
+      "100 g olives noires",
+      "8 filets anchois",
+      "4 cuillères à soupe huile d'olive",
+      "2 cuillères à soupe vinaigre",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Cuire les haricots verts et les œufs.",
@@ -346,14 +376,14 @@ recipes_data = [
   {
     title: "Risotto aux champignons",
     ingredients: [
-      "300 g de riz arborio",
-      "200 g de champignons de Paris",
-      "100 g de champignons séchés",
+      "300 g riz arborio",
+      "200 g champignons de Paris",
+      "100 g champignons séchés",
       "1 oignon",
-      "15 cl de vin blanc",
-      "1 litre de bouillon de volaille",
-      "50 g de parmesan",
-      "50 g de beurre"
+      "15 cl vin blanc",
+      "1 L bouillon de volaille",
+      "50 g parmesan",
+      "50 g beurre"
     ],
     steps: [
       "Réhydrater les champignons séchés.",
@@ -370,15 +400,15 @@ recipes_data = [
   {
     title: "Couscous royal",
     ingredients: [
-      "500 g de semoule",
-      "300 g de poulet",
-      "300 g d'agneau",
+      "500 g semoule",
+      "300 g poulet",
+      "300 g agneau",
       "4 merguez",
       "4 carottes",
       "4 navets",
       "2 courgettes",
-      "1 boîte de pois chiches",
-      "2 cuillères à soupe de ras el hanout",
+      "400 g pois chiches",
+      "2 cuillères à soupe ras el hanout",
       "Harissa"
     ],
     steps: [
@@ -396,13 +426,13 @@ recipes_data = [
   {
     title: "Tiramisu",
     ingredients: [
-      "500 g de mascarpone",
+      "500 g mascarpone",
       "6 œufs",
-      "150 g de sucre",
+      "150 g sucre",
       "30 biscuits à la cuillère",
-      "30 cl de café fort froid",
-      "Cacao en poudre",
-      "2 cuillères à soupe d'amaretto (optionnel)"
+      "30 cl café fort froid",
+      "3 cuillères à soupe cacao en poudre",
+      "2 cuillères à soupe amaretto"
     ],
     steps: [
       "Séparer les blancs des jaunes.",
@@ -420,14 +450,14 @@ recipes_data = [
     title: "Poulet basquaise",
     ingredients: [
       "1 poulet découpé",
-      "4 poivrons (rouge, vert, jaune)",
+      "4 poivrons",
       "4 tomates",
       "2 oignons",
-      "4 gousses d'ail",
-      "200 g de jambon de Bayonne",
-      "15 cl de vin blanc",
-      "Piment d'Espelette",
-      "Huile d'olive"
+      "4 gousses ail",
+      "200 g jambon de Bayonne",
+      "15 cl vin blanc",
+      "1 cuillère à café piment d'Espelette",
+      "3 cuillères à soupe huile d'olive"
     ],
     steps: [
       "Faire dorer les morceaux de poulet.",
@@ -445,12 +475,12 @@ recipes_data = [
     title: "Gâteau au yaourt",
     ingredients: [
       "1 yaourt nature",
-      "3 pots de farine",
-      "2 pots de sucre",
-      "1/2 pot d'huile",
+      "3 pots farine",
+      "2 pots sucre",
+      "1/2 pot huile",
       "3 œufs",
-      "1 sachet de levure",
-      "1 sachet de sucre vanillé"
+      "1 sachet levure",
+      "1 sachet sucre vanillé"
     ],
     steps: [
       "Préchauffer le four à 180°C.",
@@ -469,14 +499,14 @@ recipes_data = [
     ingredients: [
       "1 laitue romaine",
       "2 blancs de poulet",
-      "100 g de parmesan",
-      "100 g de croûtons",
-      "4 filets d'anchois",
+      "100 g parmesan",
+      "100 g croûtons",
+      "4 filets anchois",
       "1 jaune d'œuf",
-      "1 gousse d'ail",
-      "Jus de citron",
-      "Huile d'olive",
-      "Moutarde"
+      "1 gousse ail",
+      "1 citron",
+      "10 cl huile d'olive",
+      "1 cuillère à café moutarde"
     ],
     steps: [
       "Griller les blancs de poulet et les trancher.",
@@ -493,15 +523,16 @@ recipes_data = [
   {
     title: "Chili con carne",
     ingredients: [
-      "500 g de bœuf haché",
-      "1 boîte de haricots rouges",
-      "1 boîte de tomates concassées",
+      "500 g bœuf haché",
+      "400 g haricots rouges",
+      "400 g tomates concassées",
       "2 oignons",
-      "2 gousses d'ail",
-      "2 cuillères à soupe de cumin",
-      "1 cuillère à café de piment",
+      "2 gousses ail",
+      "2 cuillères à soupe cumin",
+      "1 cuillère à café piment",
       "1 poivron rouge",
-      "Sel et poivre"
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Faire revenir les oignons et l'ail.",
@@ -520,9 +551,9 @@ recipes_data = [
     ingredients: [
       "1 pâte feuilletée",
       "8 pommes Golden",
-      "150 g de sucre",
-      "100 g de beurre",
-      "1 cuillère à café de cannelle"
+      "150 g sucre",
+      "100 g beurre",
+      "1 cuillère à café cannelle"
     ],
     steps: [
       "Préchauffer le four à 180°C.",
@@ -539,15 +570,16 @@ recipes_data = [
   {
     title: "Pot-au-feu",
     ingredients: [
-      "800 g de bœuf (gîte, plat de côte)",
+      "800 g bœuf",
       "4 poireaux",
       "4 carottes",
       "4 navets",
       "2 oignons",
-      "1 céleri branche",
+      "2 branches céleri",
       "1 bouquet garni",
       "Gros sel",
-      "Cornichons et moutarde pour servir"
+      "Cornichons",
+      "Moutarde"
     ],
     steps: [
       "Mettre la viande dans une grande marmite d'eau froide.",
@@ -564,13 +596,13 @@ recipes_data = [
   {
     title: "Pizza margherita",
     ingredients: [
-      "500 g de farine",
-      "1 sachet de levure de boulanger",
-      "30 cl d'eau tiède",
-      "1 cuillère à café de sel",
-      "2 cuillères à soupe d'huile d'olive",
-      "400 g de sauce tomate",
-      "250 g de mozzarella",
+      "500 g farine",
+      "1 sachet levure de boulanger",
+      "30 cl eau tiède",
+      "1 cuillère à café sel",
+      "2 cuillères à soupe huile d'olive",
+      "400 g sauce tomate",
+      "250 g mozzarella",
       "Basilic frais"
     ],
     steps: [
@@ -588,11 +620,11 @@ recipes_data = [
   {
     title: "Croque-monsieur",
     ingredients: [
-      "8 tranches de pain de mie",
-      "4 tranches de jambon blanc",
-      "200 g de gruyère râpé",
-      "30 cl de béchamel",
-      "Beurre"
+      "8 tranches pain de mie",
+      "4 tranches jambon blanc",
+      "200 g gruyère râpé",
+      "30 cl béchamel",
+      "30 g beurre"
     ],
     steps: [
       "Préchauffer le four à 200°C.",
@@ -609,12 +641,12 @@ recipes_data = [
   {
     title: "Fondant au chocolat",
     ingredients: [
-      "200 g de chocolat noir",
-      "150 g de beurre",
-      "150 g de sucre",
+      "200 g chocolat noir",
+      "150 g beurre",
+      "150 g sucre",
       "4 œufs",
-      "50 g de farine",
-      "1 pincée de sel"
+      "50 g farine",
+      "1 pincée sel"
     ],
     steps: [
       "Préchauffer le four à 180°C.",
@@ -636,10 +668,11 @@ recipes_data = [
       "2 pommes de terre",
       "1 oignon",
       "1 navet",
-      "1 branche de céleri",
-      "1 cube de bouillon",
-      "Sel et poivre",
-      "Crème fraîche"
+      "1 branche céleri",
+      "1 cube bouillon",
+      "Sel",
+      "Poivre",
+      "4 cuillères à soupe crème fraîche"
     ],
     steps: [
       "Éplucher et couper tous les légumes en morceaux.",
@@ -657,12 +690,13 @@ recipes_data = [
     title: "Œufs cocotte",
     ingredients: [
       "4 œufs",
-      "10 cl de crème fraîche",
-      "50 g de comté râpé",
-      "4 tranches de jambon",
+      "10 cl crème fraîche",
+      "50 g comté râpé",
+      "4 tranches jambon",
       "Ciboulette",
-      "Sel et poivre",
-      "Beurre"
+      "Sel",
+      "Poivre",
+      "20 g beurre"
     ],
     steps: [
       "Préchauffer le four à 180°C.",
@@ -679,13 +713,14 @@ recipes_data = [
   {
     title: "Tartiflette",
     ingredients: [
-      "1 kg de pommes de terre",
+      "1 kg pommes de terre",
       "1 reblochon entier",
-      "200 g de lardons",
+      "200 g lardons",
       "2 oignons",
-      "20 cl de crème fraîche",
-      "15 cl de vin blanc",
-      "Sel et poivre"
+      "20 cl crème fraîche",
+      "15 cl vin blanc",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Cuire les pommes de terre à l'eau.",
@@ -702,13 +737,14 @@ recipes_data = [
   {
     title: "Saumon en papillote",
     ingredients: [
-      "4 pavés de saumon",
+      "4 pavés saumon",
       "2 citrons",
       "1 fenouil",
-      "4 tomates cerises",
+      "12 tomates cerises",
       "Aneth frais",
-      "Huile d'olive",
-      "Sel et poivre"
+      "3 cuillères à soupe huile d'olive",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Préchauffer le four à 200°C.",
@@ -727,12 +763,13 @@ recipes_data = [
     ingredients: [
       "4 courgettes",
       "3 œufs",
-      "20 cl de crème fraîche",
-      "100 g de gruyère râpé",
+      "20 cl crème fraîche",
+      "100 g gruyère râpé",
       "1 oignon",
-      "2 gousses d'ail",
-      "Huile d'olive",
-      "Sel et poivre"
+      "2 gousses ail",
+      "2 cuillères à soupe huile d'olive",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Préchauffer le four à 180°C.",
@@ -749,16 +786,16 @@ recipes_data = [
   {
     title: "Wok de légumes au tofu",
     ingredients: [
-      "400 g de tofu ferme",
+      "400 g tofu ferme",
       "2 carottes",
       "1 poivron",
-      "200 g de brocoli",
-      "200 g de pousses de soja",
-      "3 cuillères à soupe de sauce soja",
-      "1 cuillère à soupe de miel",
-      "2 gousses d'ail",
-      "Gingembre frais",
-      "Huile de sésame"
+      "200 g brocoli",
+      "200 g pousses de soja",
+      "3 cuillères à soupe sauce soja",
+      "1 cuillère à soupe miel",
+      "2 gousses ail",
+      "1 morceau gingembre frais",
+      "2 cuillères à soupe huile de sésame"
     ],
     steps: [
       "Couper le tofu en cubes et le faire dorer.",
@@ -775,13 +812,13 @@ recipes_data = [
   {
     title: "Clafoutis aux cerises",
     ingredients: [
-      "500 g de cerises",
+      "500 g cerises",
       "4 œufs",
-      "100 g de sucre",
-      "100 g de farine",
-      "25 cl de lait",
-      "1 sachet de sucre vanillé",
-      "Beurre pour le moule"
+      "100 g sucre",
+      "100 g farine",
+      "25 cl lait",
+      "1 sachet sucre vanillé",
+      "20 g beurre"
     ],
     steps: [
       "Préchauffer le four à 180°C.",
@@ -799,12 +836,13 @@ recipes_data = [
     title: "Poulet au citron",
     ingredients: [
       "4 cuisses de poulet",
-      "2 citrons (jus et zestes)",
-      "4 gousses d'ail",
-      "2 cuillères à soupe de miel",
+      "2 citrons",
+      "4 gousses ail",
+      "2 cuillères à soupe miel",
       "Thym frais",
-      "Huile d'olive",
-      "Sel et poivre"
+      "3 cuillères à soupe huile d'olive",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Préchauffer le four à 200°C.",
@@ -821,11 +859,11 @@ recipes_data = [
   {
     title: "Panna cotta",
     ingredients: [
-      "50 cl de crème liquide",
-      "80 g de sucre",
-      "1 gousse de vanille",
-      "3 feuilles de gélatine",
-      "Coulis de fruits rouges"
+      "50 cl crème liquide",
+      "80 g sucre",
+      "1 gousse vanille",
+      "3 feuilles gélatine",
+      "15 cl coulis de fruits rouges"
     ],
     steps: [
       "Faire ramollir la gélatine dans l'eau froide.",
@@ -843,13 +881,15 @@ recipes_data = [
     title: "Burger maison",
     ingredients: [
       "4 pains à burger",
-      "600 g de bœuf haché",
-      "4 tranches de cheddar",
-      "4 feuilles de salade",
+      "600 g bœuf haché",
+      "4 tranches cheddar",
+      "4 feuilles salade",
       "2 tomates",
       "1 oignon rouge",
-      "Cornichons",
-      "Ketchup, moutarde, mayonnaise"
+      "4 cornichons",
+      "Ketchup",
+      "Moutarde",
+      "Mayonnaise"
     ],
     steps: [
       "Former 4 steaks avec la viande, saler et poivrer.",
@@ -866,13 +906,14 @@ recipes_data = [
   {
     title: "Velouté de potiron",
     ingredients: [
-      "1 kg de potiron",
+      "1 kg potiron",
       "2 pommes de terre",
       "1 oignon",
-      "1 litre de bouillon de légumes",
-      "20 cl de crème fraîche",
-      "Noix de muscade",
-      "Sel et poivre"
+      "1 L bouillon de légumes",
+      "20 cl crème fraîche",
+      "1 pincée noix de muscade",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Couper le potiron et les pommes de terre en morceaux.",
@@ -890,11 +931,11 @@ recipes_data = [
     title: "Pavé de bœuf sauce au poivre",
     ingredients: [
       "4 pavés de bœuf",
-      "20 cl de crème fraîche",
-      "2 cuillères à soupe de poivre vert",
-      "3 cl de cognac",
+      "20 cl crème fraîche",
+      "2 cuillères à soupe poivre vert",
+      "3 cl cognac",
       "2 échalotes",
-      "30 g de beurre",
+      "30 g beurre",
       "Sel"
     ],
     steps: [
@@ -913,12 +954,12 @@ recipes_data = [
     title: "Tarte au citron meringuée",
     ingredients: [
       "1 pâte sablée",
-      "4 citrons (jus et zestes)",
-      "200 g de sucre",
+      "4 citrons",
+      "200 g sucre",
       "4 œufs",
-      "100 g de beurre",
+      "100 g beurre",
       "3 blancs d'œufs",
-      "150 g de sucre glace"
+      "150 g sucre glace"
     ],
     steps: [
       "Cuire la pâte à blanc 15 minutes à 180°C.",
@@ -935,15 +976,16 @@ recipes_data = [
   {
     title: "Boulettes de viande à la tomate",
     ingredients: [
-      "500 g de viande hachée",
+      "500 g viande hachée",
       "1 œuf",
-      "50 g de chapelure",
+      "50 g chapelure",
       "1 oignon",
-      "500 ml de sauce tomate",
-      "2 gousses d'ail",
+      "500 ml sauce tomate",
+      "2 gousses ail",
       "Basilic frais",
-      "Parmesan",
-      "Sel et poivre"
+      "50 g parmesan",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Mélanger viande, œuf, chapelure, oignon haché.",
@@ -960,15 +1002,16 @@ recipes_data = [
   {
     title: "Salade de quinoa",
     ingredients: [
-      "200 g de quinoa",
+      "200 g quinoa",
       "1 concombre",
-      "200 g de tomates cerises",
+      "200 g tomates cerises",
       "1 avocat",
-      "100 g de feta",
+      "100 g feta",
       "Menthe fraîche",
-      "Jus de 2 citrons",
-      "Huile d'olive",
-      "Sel et poivre"
+      "2 citrons",
+      "4 cuillères à soupe huile d'olive",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Cuire le quinoa et le laisser refroidir.",
@@ -985,10 +1028,10 @@ recipes_data = [
   {
     title: "Porc au caramel",
     ingredients: [
-      "600 g de poitrine de porc",
-      "100 g de sucre",
-      "4 cuillères à soupe de nuoc-mam",
-      "3 gousses d'ail",
+      "600 g poitrine de porc",
+      "100 g sucre",
+      "4 cuillères à soupe nuoc-mam",
+      "3 gousses ail",
       "1 oignon",
       "Poivre",
       "Coriandre fraîche"
@@ -1008,13 +1051,14 @@ recipes_data = [
   {
     title: "Gaspacho",
     ingredients: [
-      "1 kg de tomates bien mûres",
+      "1 kg tomates bien mûres",
       "1 concombre",
       "1 poivron rouge",
-      "2 gousses d'ail",
-      "3 cuillères à soupe d'huile d'olive",
-      "2 cuillères à soupe de vinaigre de Xérès",
-      "Sel et poivre",
+      "2 gousses ail",
+      "3 cuillères à soupe huile d'olive",
+      "2 cuillères à soupe vinaigre de Xérès",
+      "Sel",
+      "Poivre",
       "Basilic"
     ],
     steps: [
@@ -1034,10 +1078,11 @@ recipes_data = [
     ingredients: [
       "4 magrets de canard",
       "4 oranges",
-      "2 cuillères à soupe de miel",
-      "10 cl de Grand Marnier",
-      "20 cl de fond de veau",
-      "Sel et poivre"
+      "2 cuillères à soupe miel",
+      "10 cl Grand Marnier",
+      "20 cl fond de veau",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Quadriller la peau des magrets.",
@@ -1055,11 +1100,11 @@ recipes_data = [
     title: "Crumble aux pommes",
     ingredients: [
       "6 pommes",
-      "150 g de farine",
-      "100 g de beurre froid",
-      "100 g de sucre roux",
-      "50 g de poudre d'amande",
-      "Cannelle"
+      "150 g farine",
+      "100 g beurre froid",
+      "100 g sucre roux",
+      "50 g poudre d'amande",
+      "1 pincée cannelle"
     ],
     steps: [
       "Préchauffer le four à 180°C.",
@@ -1077,13 +1122,14 @@ recipes_data = [
     title: "Omelette aux fines herbes",
     ingredients: [
       "6 œufs",
-      "2 cuillères à soupe de crème",
+      "2 cuillères à soupe crème",
       "Ciboulette",
       "Persil",
       "Cerfeuil",
       "Estragon",
-      "30 g de beurre",
-      "Sel et poivre"
+      "30 g beurre",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Battre les œufs avec la crème.",
@@ -1100,12 +1146,13 @@ recipes_data = [
   {
     title: "Gratin de pâtes au jambon",
     ingredients: [
-      "400 g de pennes",
-      "200 g de jambon blanc",
-      "50 cl de béchamel",
-      "150 g de gruyère râpé",
-      "1 cuillère à soupe de moutarde",
-      "Sel et poivre"
+      "400 g pennes",
+      "200 g jambon blanc",
+      "50 cl béchamel",
+      "150 g gruyère râpé",
+      "1 cuillère à soupe moutarde",
+      "Sel",
+      "Poivre"
     ],
     steps: [
       "Cuire les pâtes al dente.",
@@ -1123,20 +1170,43 @@ recipes_data = [
 
 puts "📖 Création des #{recipes_data.length} recettes..."
 
+# Supprimer les anciennes données pour éviter les doublons
+user.recipe_ingredients.destroy_all if user.respond_to?(:recipe_ingredients)
+user.recipes.destroy_all
+user.ingredients.destroy_all
+
 recipes_data.each_with_index do |recipe_data, index|
-  recipe = user.recipes.find_or_create_by!(title: recipe_data[:title]) do |r|
-    r.ingredients = recipe_data[:ingredients]
-    r.steps = recipe_data[:steps]
-    r.preparation_time = recipe_data[:preparation_time]
-    r.is_favorite = recipe_data[:is_favorite]
+  # Créer la recette sans les ingrédients
+  recipe = user.recipes.create!(
+    title: recipe_data[:title],
+    steps: recipe_data[:steps],
+    preparation_time: recipe_data[:preparation_time],
+    is_favorite: recipe_data[:is_favorite]
+  )
+
+  # Parser et créer les ingrédients
+  recipe_data[:ingredients].each do |ingredient_line|
+    parsed = parse_ingredient(ingredient_line)
+
+    # Trouver ou créer l'ingrédient
+    ingredient = user.ingredients.find_or_create_by!(name: parsed[:name].capitalize)
+
+    # Créer la liaison recipe_ingredient
+    recipe.recipe_ingredients.create!(
+      ingredient: ingredient,
+      quantity: parsed[:quantity],
+      unit: parsed[:unit]
+    )
   end
+
   print "." if (index + 1) % 10 == 0
 end
 
 puts ""
 puts "✅ #{user.recipes.count} recettes créées !"
+puts "🥕 #{user.ingredients.count} ingrédients uniques créés !"
 puts ""
 puts "🎉 Seeding terminé !"
 puts ""
-puts "📧 Connexion : famille@example.com"
-puts "🔑 Mot de passe : password123"
+puts "📧 Connexion : jeremy.beaussart@gmail.com"
+puts "🔑 Mot de passe : aaaaaa"

@@ -44,6 +44,9 @@ html lang="fr"
               = link_to recipes_path, class: "nav-link #{controller_name == 'recipes' ? 'nav-link-active' : ''}"
                 span 📖
                 span Recettes
+              = link_to shopping_list_path, class: "nav-link #{controller_name == 'shopping_list' ? 'nav-link-active' : ''}"
+                span 🛒
+                span Courses
               = link_to meal_events_path, class: "nav-link #{controller_name == 'meal_events' ? 'nav-link-active' : ''}"
                 span 🎉
                 span Événements
@@ -58,16 +61,19 @@ html lang="fr"
 
       / Mobile Bottom Navigation
       nav.md:hidden.fixed.bottom-0.left-0.right-0.z-50.bg-white.border-t.border-cream-dark.safe-area-bottom
-        .grid.grid-cols-4.h-16
+        .grid.grid-cols-5.h-16
           = link_to root_path, class: "flex flex-col items-center justify-center gap-0.5 transition-colors #{controller_name == 'meal_plans' ? 'text-terracotta' : 'text-navy/50 hover:text-navy'}"
             span.text-xl 🗓️
             span.text-xs.font-medium Planning
           = link_to recipes_path, class: "flex flex-col items-center justify-center gap-0.5 transition-colors #{controller_name == 'recipes' ? 'text-terracotta' : 'text-navy/50 hover:text-navy'}"
             span.text-xl 📖
             span.text-xs.font-medium Recettes
+          = link_to shopping_list_path, class: "flex flex-col items-center justify-center gap-0.5 transition-colors #{controller_name == 'shopping_list' ? 'text-terracotta' : 'text-navy/50 hover:text-navy'}"
+            span.text-xl 🛒
+            span.text-xs.font-medium Courses
           = link_to meal_events_path, class: "flex flex-col items-center justify-center gap-0.5 transition-colors #{controller_name == 'meal_events' ? 'text-terracotta' : 'text-navy/50 hover:text-navy'}"
             span.text-xl 🎉
-            span.text-xs.font-medium Événements
+            span.text-xs.font-medium Events
           = link_to edit_user_registration_path, class: "flex flex-col items-center justify-center gap-0.5 transition-colors #{controller_name == 'registrations' ? 'text-terracotta' : 'text-navy/50 hover:text-navy'}"
             span.text-xl 👤
             span.text-xs.font-medium Compte
