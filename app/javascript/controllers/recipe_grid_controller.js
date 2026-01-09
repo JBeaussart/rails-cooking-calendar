@@ -4,15 +4,10 @@ export default class extends Controller {
   addToPlan(event) {
     const button = event.currentTarget
     const recipeId = button.dataset.recipeId
-    const recipeTitle = button.dataset.recipeTitle
     
-    // Récupérer la date sélectionnée
-    const dateInput = document.querySelector('input[name="planning_date"]:checked')
-    const date = dateInput ? dateInput.value : new Date().toISOString().split('T')[0]
-    
-    // Récupérer le type de repas sélectionné
-    const mealTypeInput = document.querySelector('input[name="planning_meal_type"]:checked')
-    const mealType = mealTypeInput ? mealTypeInput.value : 'dinner'
+    // Utiliser la date d'aujourd'hui et le dîner par défaut
+    const date = new Date().toISOString().split('T')[0]
+    const mealType = 'dinner'
     
     // Remplir le formulaire caché
     document.getElementById('quick-add-recipe-id').value = recipeId

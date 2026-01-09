@@ -17,46 +17,6 @@
     span ✨
     span Nouvelle recette
 
-/ Sélecteur de planification rapide
-- selected_date = params[:date].present? ? Date.parse(params[:date]) : Date.today
-- selected_meal_type = params[:meal_type].presence || 'dinner'
-.card.p-3.sm:p-4.mb-6.sm:mb-8.bg-gradient-to-r.from-sage/10.to-mustard/10.border-2.border-sage/20 data-controller="planning-selector"
-  / Mobile: stacked layout
-  .flex.flex-col.gap-3.sm:gap-4
-    .flex.items-center.gap-2.text-navy.font-medium.text-sm.sm:text-base
-      span.text-lg.sm:text-xl 📅
-      span Planification rapide
-      - if params[:date].present?
-        span.badge.badge-sage.ml-2 = l(selected_date, format: :long)
-    
-    / Date selector - horizontal scroll on mobile
-    .flex.gap-1.sm:gap-2.overflow-x-auto.pb-2.-mx-1.px-1
-      - (Date.today..Date.today + 13.days).each do |date|
-        - is_today = date == Date.today
-        - is_selected = date == selected_date
-        label.cursor-pointer.flex-shrink-0
-          input.peer.sr-only type="radio" name="planning_date" value=date.to_s checked=is_selected
-          .px-2.sm:px-3.py-1.5.sm:py-2.rounded-lg.text-xs.sm:text-sm.font-medium.transition-all.border-2.border-transparent.text-center class="peer-checked:bg-sage peer-checked:text-white peer-checked:border-sage hover:bg-sage/10 min-w-12 sm:min-w-14"
-            .text-xs.uppercase.tracking-wide.opacity-70
-              - if is_today
-                | Auj.
-              - else
-                = l(date, format: "%a")
-            .text-base.sm:text-lg.font-bold = date.day
-
-    / Meal type selector - wrap on mobile
-    .flex.items-center.gap-1.sm:gap-2.flex-wrap
-      - MealPlan::MEAL_TYPES.each do |type|
-        - icon = type == 'breakfast' ? '🌅' : type == 'lunch' ? '☀️' : type == 'dinner' ? '🌙' : '🍪'
-        label.cursor-pointer
-          input.peer.sr-only type="radio" name="planning_meal_type" value=type checked=(type == selected_meal_type)
-          .px-2.sm:px-3.py-1.5.sm:py-2.rounded-lg.transition-all.border-2.border-transparent.flex.items-center.gap-1 class="peer-checked:bg-terracotta peer-checked:text-white peer-checked:border-terracotta hover:bg-terracotta/10"
-            span = icon
-            span.text-xs.sm:text-sm.font-medium.hidden.xs:inline = type.capitalize
-
-    .text-xs.text-navy/50.hidden.sm:block
-      | Cliquez sur + pour ajouter une recette
-
 / Tabs et recherche
 .flex.flex-col.sm:flex-row.sm:items-center.gap-3.sm:gap-4.mb-4.sm:mb-6
   .flex.gap-2.overflow-x-auto.pb-1.-mx-1.px-1.flex-shrink-0
@@ -155,13 +115,14 @@ div data-controller="recipe-search recipe-grid"
           span Créer ma première recette
 
 / Formulaire caché pour l'ajout rapide
-= form_with url: quick_add_meal_plans_path, method: :post, id: "quick-add-form", class: "hidden" do |f|
+= form_with url: quick_add_meal_plans_path, method: :post, id: "quick-add-form", class: "hidden", data: { turbo: false } do |f|
   = f.hidden_field :recipe_id, id: "quick-add-recipe-id"
   = f.hidden_field :date, id: "quick-add-date"
   = f.hidden_field :meal_type, id: "quick-add-meal-type"
+  = f.hidden_field :redirect_to_planning, value: true, id: "quick-add-redirect"
 
-/ Toast de confirmation
-#toast.fixed.bottom-4.sm:bottom-6.left-4.right-4.sm:left-1/2.sm:-translate-x-1/2.sm:w-auto.z-50.transition-all.duration-300.opacity-0.translate-y-4.pointer-events-none
+/ Toast de confirmation (au-dessus de la navbar mobile)
+#toast.fixed.bottom-20.md:bottom-6.left-4.right-4.sm:left-1/2.sm:-translate-x-1/2.sm:w-auto.z-40.transition-all.duration-300.opacity-0.translate-y-4.pointer-events-none
   .bg-sage.text-white.px-4.sm:px-6.py-3.sm:py-4.rounded-xl.sm:rounded-2xl.shadow-2xl.flex.items-center.gap-3.justify-center
     span.text-xl.sm:text-2xl ✓
     span#toast-message.text-sm.sm:text-base Recette ajoutée !

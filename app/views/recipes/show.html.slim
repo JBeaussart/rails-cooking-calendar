@@ -33,9 +33,27 @@
                 span.mr-1 📝
                 | #{@recipe.steps.size} étapes
 
-          / Favorite button
-          = link_to toggle_favorite_recipe_path(@recipe), data: { turbo_method: :patch }, class: "flex-shrink-0 w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-200 #{@recipe.is_favorite? ? 'bg-white text-terracotta shadow-lg' : 'bg-white/20 text-white hover:bg-white/30'}"
-            span.text-lg.sm:text-2xl = @recipe.is_favorite? ? '★' : '☆'
+          .flex.items-center.gap-2.sm:gap-3
+            / Add to planning with meal type selector
+            - selected_date = params[:date].presence || Date.today.to_s
+            - selected_meal_type = params[:meal_type].presence || 'dinner'
+            .flex.items-center.bg-white/20.rounded-xl.sm:rounded-2xl.p-1.backdrop-blur-sm data-controller="meal-type-select"
+              - MealPlan::MEAL_TYPES.each do |type|
+                - icon = type == 'breakfast' ? '🌅' : type == 'lunch' ? '☀️' : type == 'dinner' ? '🌙' : '🍪'
+                - is_selected = type == selected_meal_type
+                button.w-8.h-8.sm:w-10.sm:h-10.rounded-lg.sm:rounded-xl.flex.items-center.justify-center.transition-all.text-sm.sm:text-base type="button" data-action="click->meal-type-select#select" data-meal-type=type data-meal-type-select-target="btn" class="#{is_selected ? 'bg-white text-navy shadow-md' : 'text-white/80 hover:bg-white/20'}" title=type.capitalize
+                  = icon
+              
+              / Hidden input for selected meal type
+              input type="hidden" data-meal-type-select-target="input" value=selected_meal_type
+              
+              / Add button
+              = button_to quick_add_meal_plans_path(recipe_id: @recipe.id, date: selected_date, meal_type: selected_meal_type, redirect_to_planning: true), method: :post, data: { turbo: false, "meal-type-select-target": "form" }, class: "ml-1 w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center transition-all bg-sage text-white hover:bg-sage-dark hover:scale-105 shadow-md cursor-pointer", title: "Ajouter au planning" do
+                span.text-lg.sm:text-xl.font-bold +
+            
+            / Favorite button
+            = link_to toggle_favorite_recipe_path(@recipe), data: { turbo_method: :patch }, class: "flex-shrink-0 w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-200 #{@recipe.is_favorite? ? 'bg-white text-terracotta shadow-lg' : 'bg-white/20 text-white hover:bg-white/30'}"
+              span.text-lg.sm:text-2xl = @recipe.is_favorite? ? '★' : '☆'
 
     / Ingredients
     .card.p-4.sm:p-8

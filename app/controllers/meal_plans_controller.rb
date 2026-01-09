@@ -10,8 +10,16 @@ class MealPlansController < ApplicationController
     @meal_plan.recipe_id = params[:recipe_id]
 
     if @meal_plan.save
+      notice_message = "#{@meal_plan.recipe.title} ajouté au #{I18n.l(@meal_plan.date, format: :long)} (#{@meal_plan.meal_type})"
+      
       respond_to do |format|
-        format.html { redirect_back fallback_location: recipes_path, notice: "#{@meal_plan.recipe.title} ajouté au #{I18n.l(@meal_plan.date, format: :long)} (#{@meal_plan.meal_type})" }
+        format.html do
+          if params[:redirect_to_planning]
+            redirect_to root_path, notice: notice_message
+          else
+            redirect_back fallback_location: recipes_path, notice: notice_message
+          end
+        end
         format.turbo_stream
       end
     else
