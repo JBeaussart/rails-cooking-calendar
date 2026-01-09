@@ -23,22 +23,6 @@ class MealPlansController < ApplicationController
     @meal_plans = current_user.meal_plans.includes(:recipe).order(date: :asc)
   end
 
-  def new
-    @meal_plan = current_user.meal_plans.build
-    @recipes = current_user.recipes
-  end
-
-  def create
-    @meal_plan = current_user.meal_plans.build(meal_plan_params)
-
-    if @meal_plan.save
-      redirect_to meal_plans_path, notice: "Repas planifié avec succès."
-    else
-      @recipes = current_user.recipes
-      render :new, status: :unprocessable_entity
-    end
-  end
-
   def edit
     @recipes = current_user.recipes
   end
